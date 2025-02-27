@@ -1,7 +1,9 @@
-package com.eni.encheres.dao;
+package fr.eni.auctionflow.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.eni.encheres.model.Categorie;
+import fr.eni.auctionflow.model.Categorie;
+import org.springframework.stereotype.Repository;
+
 
 public interface CategorieDao extends JpaRepository<Categorie, Long> {
 }

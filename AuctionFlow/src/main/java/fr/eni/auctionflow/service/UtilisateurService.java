@@ -1,7 +1,7 @@
-package com.eni.encheres.service;
+package fr.eni.auctionflow.service;
 
 import java.util.List;
-import com.eni.encheres.model.Utilisateur;
+import fr.eni.auctionflow.model.Utilisateur;
 
 public interface UtilisateurService {
     List<Utilisateur> getAllUtilisateurs();

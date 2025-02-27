@@ -1,4 +1,4 @@
-package com.eni.encheres.dal;
+package fr.eni.auctionflow.dal;
 
 import com.eni.encheres.bo.Vente;
 import java.time.LocalDateTime;

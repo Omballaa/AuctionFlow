@@ -1,4 +1,4 @@
-package com.eni.encheres.services;
+package fr.eni.auctionflow.service;
 
 import com.eni.encheres.bo.Vente;
 import java.util.List;

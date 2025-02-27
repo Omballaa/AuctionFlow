@@ -1,7 +1,7 @@
-package com.eni.encheres.service;
+package fr.eni.auctionflow.service;
 
 import java.util.List;
-import com.eni.encheres.model.Article;
+import fr.eni.auctionflow.model.Article;
 
 public interface ArticleService {
     void supprimerArticle(Long noCategorie);

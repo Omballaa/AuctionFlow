@@ -1,8 +1,11 @@
-package com.eni.encheres.dao;
+package fr.eni.auctionflow.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.eni.encheres.model.Article;
+import fr.eni.auctionflow.model.Article;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
+
 
 public interface ArticleDao extends JpaRepository<Article, Long> {
     List<Article> findByCategorie_noCategorie(Long noCategorie);

@@ -1,10 +1,10 @@
-package com.eni.encheres.service;
+package fr.eni.auctionflow.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import com.eni.encheres.dao.UtilisateurDao;
-import com.eni.encheres.model.Utilisateur;
+import fr.eni.auctionflow.dao.UtilisateurDao;
+import fr.eni.auctionflow.model.Utilisateur;
 
 @Service
 public class UtilisateurServiceImpl implements UtilisateurService {

@@ -1,10 +1,10 @@
-package com.eni.encheres.service;
+package fr.eni.auctionflow.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import com.eni.encheres.dao.ArticleDao;
-import com.eni.encheres.model.Article;
+import fr.eni.auctionflow.dao.ArticleDao;
+import fr.eni.auctionflow.model.Article;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {

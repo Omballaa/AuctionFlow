@@ -1,17 +1,15 @@
-package com.eni.encheres.controllers;
+package com.eni.encheres.bo.controllers;
 
 import com.eni.encheres.bo.Vente;
-import com.eni.encheres.services.VenteService;
-import com.eni.encheres.services.VenteServiceImpl;
+import fr.eni.auctionflow.service.VenteService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
+@Controller
 @RequestMapping("/ventes")
 public class VenteController {
 	
@@ -37,7 +35,7 @@ public class VenteController {
 
     @GetMapping("/lister")
     public String listerVentes() {
-        //venteService.listerVentes();
+        venteService.listerVentes();
     	
     	return "/ventes/lister.html";
     }

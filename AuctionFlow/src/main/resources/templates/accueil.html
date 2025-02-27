@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eni-Enchères</title>
+    <!-- Lien vers Tailwind CSS via le CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+
+<!-- Menu -->
+<nav class="bg-green-900 shadow-md py-4">
+    <div class="container mx-auto flex justify-between items-center px-6">
+        <div class="text-white text-2xl font-semibold">ENI-Enchère</div>
+
+        <!-- Barre de navigation -->
+        <div class="flex items-center space-x-6 " id="auth-links">
+            <div class="flex space-x-3">
+                <a href="Clients/login.html" class="bg-[#8B5A2B] text-white px-2 py-1 rounded-full border border-[#3f2204] hover:bg-[#3f2204] transition duration-300">Se connecter / S'inscrire</a>
+            </div>
+        </div>
+
+        <!-- Menu utilisateur (visible uniquement si connecté) -->
+        <div class="flex space-x-6 hidden" id="user-menu">
+            <a href="#" class="text-white">Enchères</a>
+            <a href="Enchères/nouvelleEnchere.html" class="text-white">Vendre un article</a>
+            <a href="#" class="text-white">Mon profil</a>
+            <a href="#" class="text-white">Déconnexion</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Section Accueil -->
+<section id="accueil" class="p-12 text-left">
+    <div class="container mx-auto">
+        <h1 class="text-5xl font-bold text-gray-800 mb-4 text-center">Eni-Enchères</h1>
+        <p class="text-lg text-gray-600">Découvrez les enchères en cours et trouvez des offres exclusives.</p>
+
+        <!-- Recherche et menu déroulant côte à côte -->
+        <div class="flex items-center space-x-4 mt-4">
+            <input type="text" placeholder="Rechercher..." class="px-4 py-2 w-1/2 rounded-full border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none">
+
+            <div class="relative">
+                <button class="bg-gray-100 text-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-gray-200 transition duration-300">
+                    Catégories ▼
+                </button>
+                <div class="absolute mt-2 w-48 bg-white shadow-md rounded-lg hidden" id="dropdown-menu">
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Informatique</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Ameublement</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Vêtement</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Sport&Loisirs</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="enchères" class="p-2 text-left hidden">
+    <div class="container mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Colonne Achat -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-semibold text-gray-800">Achat</h3>
+                <div class="flex items-center">
+                    <input type="radio" name="achat" class="mr-2">
+                    <label>Achat</label>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <input type="checkbox" class="mr-2">
+                        <label>Enchères ouvertes</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" class="mr-2">
+                        <label>Mes enchères</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" class="mr-2">
+                        <label>Mes enchères remportées</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne Vente -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-semibold text-gray-800">Vente</h3>
+                <div class="flex items-center">
+                    <input type="radio" name="vente" class="mr-2">
+                    <label>Vente</label>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <input type="checkbox" class="mr-2">
+                        <label>Mes ventes en cours</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" class="mr-2">
+                        <label>Ventes non débutées</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" class="mr-2">
+                        <label>Ventes terminées</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const isLoggedIn = true;
+    if (isLoggedIn) {
+        document.getElementById('user-menu').classList.remove('hidden');
+        document.getElementById('enchères').classList.remove('hidden');
+        document.getElementById('auth-links').classList.add('hidden');
+    }
+</script>
+
+<script>
+    // Gestion du menu déroulant des catégories
+    document.querySelector('button').addEventListener('click', function() {
+        document.getElementById('dropdown-menu').classList.toggle('hidden');
+    });
+</script>
+
+</body>
+</html>

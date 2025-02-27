@@ -1,4 +1,4 @@
-package com.eni.encheres.model;
+package fr.eni.auctionflow.model;
 
 import jakarta.persistence.*;
 

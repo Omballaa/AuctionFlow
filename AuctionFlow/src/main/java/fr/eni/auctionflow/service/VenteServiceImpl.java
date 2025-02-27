@@ -1,7 +1,7 @@
-package com.eni.encheres.services;
+package fr.eni.auctionflow.service;
 
 import com.eni.encheres.bo.Vente;
-import com.eni.encheres.dal.VenteRepositoryJdbcImpl;
+import fr.eni.auctionflow.dal.VenteRepositoryJdbcImpl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;

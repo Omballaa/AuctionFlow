@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 
 @SpringBootApplication
-@EntityScan("com.eni.encheres.model") 
-@EnableJpaRepositories("com.eni.encheres.dao")
+@EntityScan("fr.eni.auctionflow.model")
+@EnableJpaRepositories("fr.eni.auctionflow.dao")
 public class AuctionFlowApplication {
 
 	public static void main(String[] args) {

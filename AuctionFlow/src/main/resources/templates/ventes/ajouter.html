@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter une Vente - Eni-Enchères</title>
+    <!-- Lien vers Tailwind CSS via le CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+
+<!-- Menu -->
+<nav class="bg-green-900 shadow-md py-4">
+    <div class="container mx-auto flex justify-between items-center px-6">
+        <div class="text-white text-2xl font-semibold">ENI-Enchère</div>
+    </div>
+</nav>
+
+<!-- Formulaire Ajouter une Vente -->
+<section id="add-sale" class="p-12">
+    <div class="container mx-auto">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Ajouter une Vente</h2>
+
+        <!-- Formulaire -->
+        <form action="#" method="POST" enctype="multipart/form-data" class="space-y-6">
+
+            <!-- Nom de l'article -->
+            <div>
+                <label for="article-name" class="block text-gray-700 font-medium mb-2">Nom de l'article</label>
+                <input type="text" id="article-name" name="article-name" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <!-- Description de l'article -->
+            <div>
+                <label for="article-description" class="block text-gray-700 font-medium mb-2">Description de l'article</label>
+                <textarea id="article-description" name="article-description" rows="4" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500"></textarea>
+            </div>
+
+            <!-- Catégorie -->
+            <div>
+                <label for="category" class="block text-gray-700 font-medium mb-2">Catégorie</label>
+                <select id="category" name="category" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500">
+                    <option value="informatique">Informatique</option>
+                    <option value="ameublement">Ameublement</option>
+                    <option value="vetements">Vêtements</option>
+                    <option value="sport-loisirs">Sport & Loisirs</option>
+                </select>
+            </div>
+
+            <!-- Upload des photos -->
+            <div>
+                <label for="photos" class="block text-gray-700 font-medium mb-2">Ajouter des photos de l'article</label>
+                <input type="file" id="photos" name="photos" multiple class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <!-- Mise à prix -->
+            <div>
+                <label for="starting-price" class="block text-gray-700 font-medium mb-2">Mise à prix</label>
+                <input type="number" id="starting-price" name="starting-price" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500" placeholder="€">
+            </div>
+
+            <!-- Date de début -->
+            <div>
+                <label for="start-date" class="block text-gray-700 font-medium mb-2">Date de début</label>
+                <input type="datetime-local" id="start-date" name="start-date" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <!-- Date de fin -->
+            <div>
+                <label for="end-date" class="block text-gray-700 font-medium mb-2">Date de fin</label>
+                <input type="datetime-local" id="end-date" name="end-date" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <!-- Adresse de retrait -->
+            <div>
+                <label for="pickup-address" class="block text-gray-700 font-medium mb-2">Adresse de retrait</label>
+                <input type="text" id="pickup-address" name="pickup-address" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500" value="" readonly>
+            </div>
+
+            <!-- Bouton de soumission -->
+            <div class="text-center">
+                <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded-full hover:bg-green-800 transition duration-300">Ajouter la vente</button>
+                <button type="button" onclick="window.location.href='../accueil.html'" class="bg-green-600 text-white px-6 py-3 rounded-full hover:bg-green-800 transition duration-300">Annuler</button>
+            </div>
+
+        </form>
+    </div>
+</section>
+
+</body>
+</html>

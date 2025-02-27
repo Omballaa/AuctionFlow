@@ -27,6 +27,6 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<Article> getArticlesByCategorie(Long noCategorie) {
-        return articleDao.findByCategorieId(noCategorie);
+        return articleDao.findByCategorie_noCategorie(noCategorie);
     }
 }

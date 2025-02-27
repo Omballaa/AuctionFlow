@@ -29,4 +29,10 @@ public class ArticleServiceImpl implements ArticleService {
     public List<Article> getArticlesByCategorie(Long noCategorie) {
         return articleDao.findByCategorie_noCategorie(noCategorie);
     }
+
+    @Override
+    public List<Article> getEnchereEnCours() {
+        return articleDao.findEncheresEnCours();
+    }
+
 }

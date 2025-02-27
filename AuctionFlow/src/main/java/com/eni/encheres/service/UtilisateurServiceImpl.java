@@ -32,7 +32,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     @Override
-    public void supprimerUtilisateur(Long id) {
-        utilisateurDao.deleteById(id);
+    public void supprimerUtilisateur(Long noUtilisateur) {
+        utilisateurDao.deleteById(noUtilisateur);
     }
 }

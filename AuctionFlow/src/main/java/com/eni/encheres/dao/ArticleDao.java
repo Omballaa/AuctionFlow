@@ -5,5 +5,5 @@ import com.eni.encheres.model.Article;
 import java.util.List;
 
 public interface ArticleDao extends JpaRepository<Article, Long> {
-    List<Article> findByCategorieId(Long categorieId);
+    List<Article> findByCategorieId(Long noCategorie);
 }

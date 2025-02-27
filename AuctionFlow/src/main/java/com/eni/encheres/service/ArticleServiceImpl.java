@@ -9,8 +9,8 @@ import com.eni.encheres.model.Article;
 @Service
 public class ArticleServiceImpl implements ArticleService {
     @Override
-    public void supprimerArticle(Long id) {
-        articleDao.deleteById(id);
+    public void supprimerArticle(Long noCategorie) {
+        articleDao.deleteById(noCategorie);
     }
     @Autowired
     private ArticleDao articleDao;
@@ -26,7 +26,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<Article> getArticlesByCategorie(Long categorieId) {
-        return articleDao.findByCategorieId(categorieId);
+    public List<Article> getArticlesByCategorie(Long noCategorie) {
+        return articleDao.findByCategorieId(noCategorie);
     }
 }

@@ -7,4 +7,5 @@ public interface ArticleService {
     void supprimerArticle(Long id);
     List<Article> getAllArticles();
     Article ajouterArticle(Article article);
+    List<Article> getArticlesByCategorie(Long categorieId);
 }

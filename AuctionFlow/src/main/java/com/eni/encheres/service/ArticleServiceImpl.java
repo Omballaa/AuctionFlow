@@ -24,4 +24,9 @@ public class ArticleServiceImpl implements ArticleService {
     public Article ajouterArticle(Article article) {
         return articleDao.save(article);
     }
+
+    @Override
+    public List<Article> getArticlesByCategorie(Long categorieId) {
+        return articleDao.findByCategorieId(categorieId);
+    }
 }

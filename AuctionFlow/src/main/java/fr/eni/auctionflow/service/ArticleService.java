@@ -8,4 +8,5 @@ public interface ArticleService {
     List<Article> getAllArticles();
     Article ajouterArticle(Article article);
     List<Article> getArticlesByCategorie(Long noCategorie);
+    List<Article> getEnchereEnCours();
 }

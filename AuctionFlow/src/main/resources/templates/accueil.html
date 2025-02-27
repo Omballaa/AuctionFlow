@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eni-Enchères</title>
-    <!-- Lien vers Tailwind CSS via le CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 font-sans">
@@ -15,13 +14,11 @@
         <div class="text-white text-2xl font-semibold">ENI-Enchère</div>
 
         <!-- Barre de navigation -->
-        <div class="flex items-center space-x-6 " id="auth-links">
-            <div class="flex space-x-3">
-                <a href="Clients/login.html" class="bg-[#8B5A2B] text-white px-2 py-1 rounded-full border border-[#3f2204] hover:bg-[#3f2204] transition duration-300">Se connecter / S'inscrire</a>
-            </div>
+        <div class="flex items-center space-x-6" id="auth-links">
+            <a href="Clients/login.html" class="bg-[#8B5A2B] text-white px-4 py-2 rounded-full border border-[#3f2204] hover:bg-[#3f2204] transition">Se connecter / S'inscrire</a>
         </div>
 
-        <!-- Menu utilisateur (visible uniquement si connecté) -->
+        <!-- Menu utilisateur -->
         <div class="flex space-x-6 hidden" id="user-menu">
             <a href="#" class="text-white">Enchères</a>
             <a href="Enchères/nouvelleEnchere.html" class="text-white">Vendre un article</a>
@@ -37,90 +34,79 @@
         <h1 class="text-5xl font-bold text-gray-800 mb-4 text-center">Eni-Enchères</h1>
         <p class="text-lg text-gray-600">Découvrez les enchères en cours et trouvez des offres exclusives.</p>
 
-        <!-- Recherche et menu déroulant côte à côte -->
         <div class="flex items-center space-x-4 mt-4">
             <input type="text" placeholder="Rechercher..." class="px-4 py-2 w-1/2 rounded-full border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none">
 
             <div class="relative">
-                <button class="bg-gray-100 text-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-gray-200 transition duration-300">
-                    Catégories ▼
-                </button>
+                <button id="dropdown-btn" class="bg-gray-100 text-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-gray-200 transition">Catégories ▼</button>
                 <div class="absolute mt-2 w-48 bg-white shadow-md rounded-lg hidden" id="dropdown-menu">
                     <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Informatique</a>
                     <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Ameublement</a>
                     <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Vêtement</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Sport&Loisirs</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Sport & Loisirs</a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section id="enchères" class="p-2 text-left hidden">
+<!-- Section des ventes en cours -->
+<section id="ventes-en-cours" class="p-12">
     <div class="container mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Colonne Achat -->
-            <div class="space-y-4">
-                <h3 class="text-xl font-semibold text-gray-800">Achat</h3>
-                <div class="flex items-center">
-                    <input type="radio" name="achat" class="mr-2">
-                    <label>Achat</label>
-                </div>
-                <div class="space-y-2">
-                    <div class="flex items-center">
-                        <input type="checkbox" class="mr-2">
-                        <label>Enchères ouvertes</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" class="mr-2">
-                        <label>Mes enchères</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" class="mr-2">
-                        <label>Mes enchères remportées</label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Colonne Vente -->
-            <div class="space-y-4">
-                <h3 class="text-xl font-semibold text-gray-800">Vente</h3>
-                <div class="flex items-center">
-                    <input type="radio" name="vente" class="mr-2">
-                    <label>Vente</label>
-                </div>
-                <div class="space-y-2">
-                    <div class="flex items-center">
-                        <input type="checkbox" class="mr-2">
-                        <label>Mes ventes en cours</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" class="mr-2">
-                        <label>Ventes non débutées</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" class="mr-2">
-                        <label>Ventes terminées</label>
-                    </div>
-                </div>
-            </div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Ventes en cours</h2>
+        <div id="ventes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Les ventes seront injectées ici -->
         </div>
     </div>
 </section>
 
 <script>
-    const isLoggedIn = true;
-    if (isLoggedIn) {
-        document.getElementById('user-menu').classList.remove('hidden');
-        document.getElementById('enchères').classList.remove('hidden');
-        document.getElementById('auth-links').classList.add('hidden');
-    }
-</script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("/api/articles/encheres-en-cours")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erreur réseau : " + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const ventesContainer = document.getElementById("ventes-container");
+                ventesContainer.innerHTML = "";
 
-<script>
-    // Gestion du menu déroulant des catégories
-    document.querySelector('button').addEventListener('click', function() {
-        document.getElementById('dropdown-menu').classList.toggle('hidden');
+                if (data.length === 0) {
+                    ventesContainer.innerHTML = "<p class='text-gray-600 text-center'>Aucune enchère en cours pour le moment.</p>";
+                } else {
+                    data.forEach(article => {
+                        const venteCard = `
+                            <div class="bg-white shadow-lg rounded-lg p-4">
+                                <img src="https://via.placeholder.com/150" alt="${article.nom}" class="w-full h-40 object-cover rounded-md">
+                                <h3 class="text-xl font-semibold mt-2">${article.nom}</h3>
+                                <p class="text-gray-700">Prix de départ : <span class="font-bold">${article.prixInitial} €</span></p>
+                                <p class="text-gray-500 text-sm">Fin : ${new Date(article.dateFinEnchere).toLocaleDateString()}</p>
+                                <button class="bg-green-600 text-white px-4 py-2 mt-3 rounded-md hover:bg-green-800 transition">Voir l'enchère</button>
+                            </div>
+                        `;
+                        ventesContainer.innerHTML += venteCard;
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Erreur lors de la récupération des ventes :", error);
+                document.getElementById("ventes-container").innerHTML = `<p class="text-red-600 text-center">Impossible de charger les enchères.</p>`;
+            });
+    });
+
+    // Gestion du menu utilisateur (connexion/déconnexion)
+    const isLoggedIn = true; // Remplace ceci par un check serveur
+    if (isLoggedIn) {
+        const userMenu = document.getElementById('user-menu');
+        const authLinks = document.getElementById('auth-links');
+        if (userMenu) userMenu.classList.remove('hidden');
+        if (authLinks) authLinks.classList.add('hidden');
+    }
+
+    document.getElementById("dropdown-btn").addEventListener("click", function() {
+        document.getElementById("dropdown-menu").classList.toggle("hidden");
     });
 </script>
 

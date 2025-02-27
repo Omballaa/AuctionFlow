@@ -17,7 +17,7 @@ public class ArticlesController {
     @GetMapping("/")
     public String afficherAccueil(Model model) {
         List<Article> encheresEnCours = articleService.getEnchereEnCours();
-        model.addAttribute("encheres", encheresEnCours);
+        model.addAttribute("encheresEnCours", encheresEnCours);
         return "accueil";
     }
 }

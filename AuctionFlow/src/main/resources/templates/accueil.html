@@ -21,7 +21,7 @@
         <!-- Menu utilisateur -->
         <div class="flex space-x-6 hidden" id="user-menu">
             <a href="#" class="text-white">Enchères</a>
-            <a href="Enchères/nouvelleEnchere.html" class="text-white">Vendre un article</a>
+            <a href="ventes/ajouter.html" class="text-white">Vendre un article</a>
             <a href="#" class="text-white">Mon profil</a>
             <a href="#" class="text-white">Déconnexion</a>
         </div>
@@ -55,47 +55,22 @@
     <div class="container mx-auto">
         <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Ventes en cours</h2>
         <div id="ventes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Les ventes seront injectées ici -->
+            <!-- Affichage des enchères -->
+            <div th:each="article : ${encheresEnCours}" class="bg-white shadow-lg rounded-lg p-4">
+                <img th:src="@{https://placehold.jp/3d4070/ffffff/150x150.png}" class="w-full h-40 object-cover rounded-md">
+                <h3 th:text="|${article.nomArticle}|"
+                    class="text-xl font-semibold mt-2"></h3>
+                <p th:text="|Prix de départ : ${article.prixInitial} pts |"
+                   class="text-gray-700"></p>
+                <p th:text="|Fin : ${#dates.format(article.dateFinEncheres, 'dd/MM/yyyy')}|"
+                   class="text-gray-500 text-sm"></p>
+                <button class="bg-green-600 text-white px-4 py-2 mt-3 rounded-md hover:bg-green-800 transition">Voir l'enchère</button>
+            </div>
         </div>
     </div>
 </section>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        fetch("/api/articles/encheres-en-cours")
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Erreur réseau : " + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                const ventesContainer = document.getElementById("ventes-container");
-                ventesContainer.innerHTML = "";
-
-                if (data.length === 0) {
-                    ventesContainer.innerHTML = "<p class='text-gray-600 text-center'>Aucune enchère en cours pour le moment.</p>";
-                } else {
-                    data.forEach(article => {
-                        const venteCard = `
-                            <div class="bg-white shadow-lg rounded-lg p-4">
-                                <img src="https://via.placeholder.com/150" alt="${article.nom}" class="w-full h-40 object-cover rounded-md">
-                                <h3 class="text-xl font-semibold mt-2">${article.nom}</h3>
-                                <p class="text-gray-700">Prix de départ : <span class="font-bold">${article.prixInitial} €</span></p>
-                                <p class="text-gray-500 text-sm">Fin : ${new Date(article.dateFinEnchere).toLocaleDateString()}</p>
-                                <button class="bg-green-600 text-white px-4 py-2 mt-3 rounded-md hover:bg-green-800 transition">Voir l'enchère</button>
-                            </div>
-                        `;
-                        ventesContainer.innerHTML += venteCard;
-                    });
-                }
-            })
-            .catch(error => {
-                console.error("Erreur lors de la récupération des ventes :", error);
-                document.getElementById("ventes-container").innerHTML = `<p class="text-red-600 text-center">Impossible de charger les enchères.</p>`;
-            });
-    });
-
     // Gestion du menu utilisateur (connexion/déconnexion)
     const isLoggedIn = true; // Remplace ceci par un check serveur
     if (isLoggedIn) {

@@ -13,4 +13,10 @@ public interface ArticleDao extends JpaRepository<Article, Long> {
 
     @Query ("SELECT a FROM Article a WHERE a.dateFinEncheres > CURRENT_TIMESTAMP ")
     List<Article> findEncheresEnCours();
+
+    List<Article> findByNomArticle(String nomArticle);
+
+    // Nouvelle méthode pour filtrer par nom et catégorie
+    List<Article> findByNomArticleContainingIgnoreCaseAndCategorie_noCategorie(String nomArticle, Long noCategorie);
+
 }

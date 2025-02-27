@@ -34,37 +34,44 @@
         <h1 class="text-5xl font-bold text-gray-800 mb-4 text-center">Eni-Enchères</h1>
         <p class="text-lg text-gray-600">Découvrez les enchères en cours et trouvez des offres exclusives.</p>
 
-        <div class="flex items-center space-x-4 mt-4">
-            <input type="text" placeholder="Rechercher..." class="px-4 py-2 w-1/2 rounded-full border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none">
+        <form action="/" method="get" class="flex items-center space-x-4 mt-4" id="search-form">
+            <!-- Champ de recherche par nom -->
+            <input type="text" name="nomArticle" placeholder="Rechercher par nom..." class="px-4 py-2 w-1/2 rounded-full border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none" id="search-input">
 
+            <!-- Sélecteur de catégorie -->
             <div class="relative">
-                <button id="dropdown-btn" class="bg-gray-100 text-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-gray-200 transition">Catégories ▼</button>
+                <button type="button" id="dropdown-btn" class="bg-gray-100 text-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-gray-200 transition">Catégories ▼</button>
                 <div class="absolute mt-2 w-48 bg-white shadow-md rounded-lg hidden" id="dropdown-menu">
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Informatique</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Ameublement</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Vêtement</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Sport & Loisirs</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100" onclick="selectCategory(1)">Informatique</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100" onclick="selectCategory(2)">Ameublement</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100" onclick="selectCategory(3)">Vêtement</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100" onclick="selectCategory(4)">Sport & Loisirs</a>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
 
-<!-- Section des ventes en cours -->
-<section id="ventes-en-cours" class="p-12">
-    <div class="container mx-auto">
-        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Ventes en cours</h2>
-        <div id="ventes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Affichage des enchères -->
-            <div th:each="article : ${encheresEnCours}" class="bg-white shadow-lg rounded-lg p-4">
-                <img th:src="@{https://placehold.jp/3d4070/ffffff/150x150.png}" class="w-full h-40 object-cover rounded-md">
-                <h3 th:text="|${article.nomArticle}|"
-                    class="text-xl font-semibold mt-2"></h3>
-                <p th:text="|Prix de départ : ${article.prixInitial} pts |"
-                   class="text-gray-700"></p>
-                <p th:text="|Fin : ${#dates.format(article.dateFinEncheres, 'dd/MM/yyyy')}|"
-                   class="text-gray-500 text-sm"></p>
-                <button class="bg-green-600 text-white px-4 py-2 mt-3 rounded-md hover:bg-green-800 transition">Voir l'enchère</button>
+            <!-- Input caché pour l'ID de catégorie -->
+            <input type="hidden" id="category-id" name="categorieId" value="">
+
+            <!-- Bouton de filtrage -->
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-800 transition">Filtrer</button>
+
+            <!-- Bouton pour réinitialiser les filtres -->
+            <button type="button" id="reset-filters" class="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-800 transition">Réinitialiser</button>
+        </form>
+
+        <div class="flex items-center space-x-4 mt-4">
+            <div id="ventes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Affichage des enchères -->
+                <div th:each="article : ${encheres}" class="bg-white shadow-lg rounded-lg p-4">
+                    <img th:src="@{https://placehold.jp/3d4070/ffffff/150x150.png}" class="w-full h-40 object-cover rounded-md">
+                    <h3 th:text="|${article.nomArticle}|"
+                        class="text-xl font-semibold mt-2"></h3>
+                    <p th:text="|Prix de départ : ${article.prixInitial} pts |"
+                       class="text-gray-700"></p>
+                    <p th:text="|Fin : ${#dates.format(article.dateFinEncheres, 'dd/MM/yyyy')}|"
+                       class="text-gray-500 text-sm"></p>
+                    <button class="bg-green-600 text-white px-4 py-2 mt-3 rounded-md hover:bg-green-800 transition">Voir l'enchère</button>
+                </div>
             </div>
         </div>
     </div>
@@ -80,8 +87,36 @@
         if (authLinks) authLinks.classList.add('hidden');
     }
 
-    document.getElementById("dropdown-btn").addEventListener("click", function() {
+    document.getElementById("dropdown-btn").addEventListener("click", function(event) {
+        event.stopPropagation(); // Empêche la soumission du formulaire
         document.getElementById("dropdown-menu").classList.toggle("hidden");
+    });
+
+    // Ajoute un gestionnaire d'événement pour fermer le menu déroulant si on clique en dehors
+    document.addEventListener("click", function(event) {
+        if (!document.getElementById("dropdown-btn").contains(event.target)) {
+            document.getElementById("dropdown-menu").classList.add("hidden");
+        }
+    });
+
+    function selectCategory(id) {
+        document.getElementById("category-id").value = id;
+        document.getElementById("dropdown-menu").classList.add("hidden");
+    }
+
+    // Réinitialiser les filtres
+    document.getElementById("reset-filters").addEventListener("click", function() {
+        // Réinitialiser le champ de recherche
+        document.getElementById("search-input").value = "";
+
+        // Réinitialiser la catégorie sélectionnée
+        document.getElementById("category-id").value = "";
+
+        // Fermer le menu déroulant
+        document.getElementById("dropdown-menu").classList.add("hidden");
+
+        // Rediriger vers la page d'accueil (menu d'accueil de base)
+        window.location.href = "/";  // Remplacez par l'URL de votre page d'accueil
     });
 </script>
 

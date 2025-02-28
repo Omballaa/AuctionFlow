@@ -9,10 +9,15 @@ public class Utilisateur {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long noUtilisateur;
     
+    @Column(unique = true)
     private String pseudo;
+    
     private String nom;
     private String prenom;
+    
+    @Column(unique = true)
     private String email;
+    
     private String telephone;
     private String rue;
     private String codePostal;

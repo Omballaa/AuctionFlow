@@ -16,7 +16,7 @@ public class Article {
     private Date dateFinEncheres;
     private Integer prixInitial;
     private Integer prixVente;
-    
+
     @ManyToOne
     @JoinColumn(name = "no_utilisateur")
     private Utilisateur utilisateur;

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EnchereDao extends JpaRepository<Enchere, Long> {
+
 }

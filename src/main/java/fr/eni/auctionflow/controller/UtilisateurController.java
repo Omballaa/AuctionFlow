@@ -5,8 +5,6 @@ import fr.eni.auctionflow.exception.BusinessException;
 import fr.eni.auctionflow.model.Utilisateur;
 import fr.eni.auctionflow.service.UtilisateurService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.Session;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +17,38 @@ public class UtilisateurController {
 
     @Autowired
     private UtilisateurService utilisateurService;
+    
+    //afficher le profil
+    @GetMapping("/afficher-profil")
+    public String afficherProfilGet(HttpSession session, Model model) {
+    	 if (session.getAttribute("userID") == null) { //vérifie si util est connecté
+    	     return "redirect:/utilisateurs/connexion"; //redirige vers connexion si non connecté
+    	}
+    	Utilisateur utilisateur = utilisateurService.rechercherParID((long) session.getAttribute("userID"));	
+    	model.addAttribute("util", utilisateur);
+    	return "profil";
+    }
+    
+    //modifier le profil 
+    //formulaire de modification profil
+    @GetMapping("/modifier-profil")
+    public String modifierProfilGet(HttpSession session, Model model) {
+        if (session.getAttribute("userID") == null) {
+            return "redirect:/utilisateurs/connexion";
+        }
+        Utilisateur utilisateur = utilisateurService.rechercherParID((Long) session.getAttribute("userID"));
+        model.addAttribute("util", utilisateur);
+        return "modifier-profil"; 
+    }
+    
+    //traitement de la modification profil
+    @PostMapping("/modifier-profil")
+    public String modifierProfilPost(@ModelAttribute("util") Utilisateur utilisateur) {
+        utilisateurService.save(utilisateur); //save les modif
+        return "redirect:/utilisateurs/afficher-profil"; //redirige vers profil mis à jour
+    }
 
+    
     
     @GetMapping("/connexion")
     public String connexionGet(Model model) {
@@ -43,8 +72,6 @@ public class UtilisateurController {
     	//mettre utilisateur en session
     	session.setAttribute("userID", utilisateur.getNoUtilisateur());
     	session.setAttribute("pseudoUtilisateur", utilisateur.getPseudo());
-    	
-    	
     	return "redirect://";
     }
     
@@ -53,11 +80,7 @@ public class UtilisateurController {
     	session.invalidate();
     	return "redirect://";
     }
-   
-	   
-    
-    
-    
+       
     //afficher le formulaire d'inscription
     @GetMapping("/inscription")
     public String afficherFormulaireInscription(Model model) {

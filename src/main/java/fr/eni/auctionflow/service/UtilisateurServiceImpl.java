@@ -65,4 +65,16 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		
 		return utilisateurDao.findByPseudoOrEmailAndmotDePasse(pseudo, email, motDePasse);
 	}
+
+	@Override
+	public Utilisateur rechercherParID(long id) {
+
+		return utilisateurDao.findById(id).orElse(null);
+	}
+
+	@Override
+	public void save(Utilisateur utilisateur) {
+	    utilisateurDao.save(utilisateur);
+	}
+
 }

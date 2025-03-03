@@ -13,4 +13,6 @@ public interface UtilisateurService {
 	Utilisateur inscription(Utilisateur utilisateur) throws BusinessException;
     void supprimerUtilisateur(Long id);
     Utilisateur rechercherParPseudoOuEmailEtMotDePasse (String pseudo, String email, String motDePasse);
+	Utilisateur rechercherParID(long l);
+	void save(Utilisateur utilisateur);
 }

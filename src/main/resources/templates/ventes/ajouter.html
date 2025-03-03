@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter une Vente - Eni-Enchères</title>
-    <!-- Lien vers Tailwind CSS via le CDN -->
+    <title>Ajouter une enchère</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 font-sans">
@@ -13,76 +12,54 @@
 <nav class="bg-green-900 shadow-md py-4">
     <div class="container mx-auto flex justify-between items-center px-6">
         <div class="text-white text-2xl font-semibold">ENI-Enchère</div>
+        <div class="flex items-center space-x-6">
+            <a href="#" class="text-white">Enchères</a>
+            <a href="/ventes/ajouter" class="text-white">Vendre un article</a>
+            <a href="#" class="text-white">Mon profil</a>
+            <a href="#" class="text-white">Déconnexion</a>
+        </div>
     </div>
 </nav>
 
-<!-- Formulaire Ajouter une Vente -->
-<section id="add-sale" class="p-12">
+<!-- Formulaire d'ajout d'enchère -->
+<section class="p-12">
     <div class="container mx-auto">
-        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Ajouter une Vente</h2>
-
-        <!-- Formulaire -->
-        <form action="#" method="POST" enctype="multipart/form-data" class="space-y-6">
-
-            <!-- Nom de l'article -->
-            <div>
-                <label for="article-name" class="block text-gray-700 font-medium mb-2">Nom de l'article</label>
-                <input type="text" id="article-name" name="article-name" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500">
+        <h1 class="text-3xl font-bold mb-6">Ajouter une enchère</h1>
+        <form action="/ventes/ajouter" method="POST">
+            <div class="mb-4">
+                <label for="articleName" class="block text-gray-700">Nom de l'article</label>
+                <input type="text" id="articleName" name="articleName" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required>
             </div>
-
-            <!-- Description de l'article -->
-            <div>
-                <label for="article-description" class="block text-gray-700 font-medium mb-2">Description de l'article</label>
-                <textarea id="article-description" name="article-description" rows="4" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500"></textarea>
+            <div class="mb-4">
+                <label for="articleDescription" class="block text-gray-700">Description</label>
+                <textarea id="articleDescription" name="articleDescription" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required></textarea>
             </div>
-
-            <!-- Catégorie -->
-            <div>
-                <label for="category" class="block text-gray-700 font-medium mb-2">Catégorie</label>
-                <select id="category" name="category" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500">
-                    <option value="informatique">Informatique</option>
-                    <option value="ameublement">Ameublement</option>
-                    <option value="vetements">Vêtements</option>
-                    <option value="sport-loisirs">Sport & Loisirs</option>
+            <div class="mb-4">
+                <label for="categorie" class="block text-gray-700">Catégorie</label>
+                <select id="categorie" name="no_Categorie" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required>
+                    <option value="" disabled selected>Choisissez une catégorie</option>
+                    <th:block th:each="categorie : ${categories}">
+                        <option th:value="${categorie.noCategorie}" th:text="${categorie.libelle}"></option>
+                    </th:block>
                 </select>
             </div>
-
-            <!-- Upload des photos -->
-            <div>
-                <label for="photos" class="block text-gray-700 font-medium mb-2">Ajouter des photos de l'article</label>
-                <input type="file" id="photos" name="photos" multiple class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500">
+            <div class="mb-4">
+                <label for="startingPrice" class="block text-gray-700">Mise à prix</label>
+                <input type="number" id="startingPrice" name="startingPrice" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required>
             </div>
-
-            <!-- Mise à prix -->
-            <div>
-                <label for="starting-price" class="block text-gray-700 font-medium mb-2">Mise à prix</label>
-                <input type="number" id="starting-price" name="starting-price" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500" placeholder="€">
+            <div class="mb-4">
+                <label for="startDate" class="block text-gray-700">Date de début</label>
+                <input type="datetime-local" id="startDate" name="startDate" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required>
             </div>
-
-            <!-- Date de début -->
-            <div>
-                <label for="start-date" class="block text-gray-700 font-medium mb-2">Date de début</label>
-                <input type="datetime-local" id="start-date" name="start-date" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500">
+            <div class="mb-4">
+                <label for="endDate" class="block text-gray-700">Date de fin</label>
+                <input type="datetime-local" id="endDate" name="endDate" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required>
             </div>
-
-            <!-- Date de fin -->
-            <div>
-                <label for="end-date" class="block text-gray-700 font-medium mb-2">Date de fin</label>
-                <input type="datetime-local" id="end-date" name="end-date" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500">
+            <div class="mb-4">
+                <label for="utilisateurId" class="block text-gray-700">Utilisateur</label>
+                <input type="number" id="utilisateurId" name="utilisateurId" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required>
             </div>
-
-            <!-- Adresse de retrait -->
-            <div>
-                <label for="pickup-address" class="block text-gray-700 font-medium mb-2">Adresse de retrait</label>
-                <input type="text" id="pickup-address" name="pickup-address" required class="w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-green-500" value="" readonly>
-            </div>
-
-            <!-- Bouton de soumission -->
-            <div class="text-center">
-                <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded-full hover:bg-green-800 transition duration-300">Ajouter la vente</button>
-                <button type="button" onclick="window.location.href='../accueil.html'" class="bg-green-600 text-white px-6 py-3 rounded-full hover:bg-green-800 transition duration-300">Annuler</button>
-            </div>
-
+            <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg">Ajouter l'enchère</button>
         </form>
     </div>
 </section>

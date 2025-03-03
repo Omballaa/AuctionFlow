@@ -59,4 +59,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		// Ajout util en BD
 		return utilisateurDao.save(utilisateur);
 	}
+
+	@Override
+	public Utilisateur rechercherParPseudoOuEmailEtMotDePasse(String pseudo, String email, String motDePasse) {
+		
+		return utilisateurDao.findByPseudoOrEmailAndmotDePasse(pseudo, email, motDePasse);
+	}
 }

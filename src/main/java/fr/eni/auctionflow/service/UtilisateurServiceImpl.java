@@ -47,8 +47,11 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 			throw new BusinessException("Cet email est déjà pris");
 		}
 		
-		// Le pseudo n’accepte que des caractères alphanumériques. 
-		// CHATGPT
+		// Le pseudo n’accepte que des caractères alphanumériques (CHATGPT)
+		if (!utilisateur.getPseudo().matches("^[a-zA-Z0-9]+$")) {
+		    throw new BusinessException("Le pseudo ne doit contenir que des lettres et chiffres.");
+		}
+
 		
 		//Un crédit initial de 100 points est alloué à la création du compte.
 		utilisateur.setCredit(100);

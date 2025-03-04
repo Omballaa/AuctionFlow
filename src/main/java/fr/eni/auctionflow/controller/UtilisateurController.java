@@ -18,7 +18,7 @@ public class UtilisateurController {
     @Autowired
     private UtilisateurService utilisateurService;
     
-    
+    //en tant qu'util je peux supp mon compte
     @GetMapping("/supprimer-compte")
     public String supprimerCompteGet(HttpSession session) {
         if (session.getAttribute("userID") == null) {
@@ -26,9 +26,10 @@ public class UtilisateurController {
         }
         utilisateurService.supprimerUtilisateur((Long) session.getAttribute("userID")); //supp util
         session.invalidate();//déco util
-        return "redirect:/";
+        return "redirect:/"; //page accueil
     }
 
+    //en tant qu'admin, je peux supp des comptes util
     @GetMapping("/admin/supprimer-utilisateur/{id}")
     public String supprimerUtilisateurAdminGet(@PathVariable Long id, HttpSession session) {
         if (session.getAttribute("userID") == null || !utilisateurService.estAdministrateur((Long) session.getAttribute("userID"))) {

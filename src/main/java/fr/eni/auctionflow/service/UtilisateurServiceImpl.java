@@ -77,4 +77,18 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	    utilisateurDao.save(utilisateur);
 	}
 
+	@Override
+	public boolean estAdministrateur(Long userID) {
+	    if (userID == null) { //check si util est connecté
+	        return false;
+	    }
+	    Utilisateur utilisateur = utilisateurDao.findById(userID).orElse(null); //cherche util en bdd
+	    if (utilisateur == null) { //check si util existe et est admin
+	        return false;
+	    }
+	    return utilisateur.isAdministrateur();
+	}
+
+
+
 }

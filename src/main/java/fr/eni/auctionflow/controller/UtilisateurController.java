@@ -18,6 +18,27 @@ public class UtilisateurController {
     @Autowired
     private UtilisateurService utilisateurService;
     
+    
+    @GetMapping("/supprimer-compte")
+    public String supprimerCompteGet(HttpSession session) {
+        if (session.getAttribute("userID") == null) {
+            return "redirect:/utilisateurs/connexion";
+        }
+        utilisateurService.supprimerUtilisateur((Long) session.getAttribute("userID")); //supp util
+        session.invalidate();//déco util
+        return "redirect:/";
+    }
+
+    @GetMapping("/admin/supprimer-utilisateur/{id}")
+    public String supprimerUtilisateurAdminGet(@PathVariable Long id, HttpSession session) {
+        if (session.getAttribute("userID") == null || !utilisateurService.estAdministrateur((Long) session.getAttribute("userID"))) {
+            return "redirect:/utilisateurs/connexion";
+        }
+        utilisateurService.supprimerUtilisateur(id);//supp util ciblé
+        return "redirect:/admin/liste-utilisateurs"; //redirect vers liste des util
+    }
+
+    
     //afficher le profil
     @GetMapping("/afficher-profil")
     public String afficherProfilGet(HttpSession session, Model model) {

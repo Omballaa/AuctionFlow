@@ -15,4 +15,5 @@ public interface UtilisateurService {
     Utilisateur rechercherParPseudoOuEmailEtMotDePasse (String pseudo, String email, String motDePasse);
 	Utilisateur rechercherParID(long l);
 	void save(Utilisateur utilisateur);
+	boolean estAdministrateur(Long attribute);
 }

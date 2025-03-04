@@ -4,15 +4,17 @@ import fr.eni.auctionflow.dao.UtilisateurDao;
 import fr.eni.auctionflow.exception.BusinessException;
 import fr.eni.auctionflow.model.Utilisateur;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UtilisateurServiceImpl implements UtilisateurService {
+
+	private static final Logger logger = LoggerFactory.getLogger(UtilisateurServiceImpl.class);
 
 	private final UtilisateurDao utilisateurDao;
 	private final PasswordEncoder passwordEncoder;
@@ -24,66 +26,45 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	}
 
 	@Override
-	public List<Utilisateur> getAllUtilisateurs() {
-		return utilisateurDao.findAll();
-	}
-
-	@Override
 	public Optional<Utilisateur> getUtilisateurByPseudo(String pseudo) {
-		return Optional.ofNullable(utilisateurDao.findByPseudo(pseudo));
+		return Optional.ofNullable(utilisateurDao.findByPseudoOrEmail(pseudo, pseudo));
 	}
 
 	@Override
 	public Optional<Utilisateur> getUtilisateurByEmail(String email) {
-		return Optional.ofNullable(utilisateurDao.findByEmail(email));
-	}
-
-	@Override
-	public void supprimerUtilisateur(Long noUtilisateur) {
-		if (!utilisateurDao.existsById(noUtilisateur)) {
-			throw new BusinessException("L'utilisateur avec l'ID " + noUtilisateur + " n'existe pas.");
-		}
-		utilisateurDao.deleteById(noUtilisateur);
+		return Optional.ofNullable(utilisateurDao.findByPseudoOrEmail(email, email));
 	}
 
 	@Override
 	@Transactional
 	public Utilisateur inscription(Utilisateur utilisateur) throws BusinessException {
-
-		// Vérifier si le pseudo est unique
-		if (utilisateurDao.findByPseudo(utilisateur.getPseudo()) != null) {
-			throw new BusinessException("Ce pseudo est déjà utilisé. Veuillez en choisir un autre.");
+		if (utilisateurDao.existsByPseudo(utilisateur.getPseudo()) || utilisateurDao.existsByEmail(utilisateur.getEmail())) {
+			throw new BusinessException("Ce pseudo ou email est déjà utilisé.");
 		}
 
-		// Vérifier si l’email est unique
-		if (utilisateurDao.findByEmail(utilisateur.getEmail()) != null) {
-			throw new BusinessException("Cet email est déjà associé à un compte existant.");
-		}
-
-		// Vérifier si le pseudo est valide (alphanumérique uniquement)
 		if (!utilisateur.getPseudo().matches("^[a-zA-Z0-9]+$")) {
-			throw new BusinessException("Le pseudo ne doit contenir que des lettres et chiffres (sans espace ni caractères spéciaux).");
+			throw new BusinessException("Le pseudo ne doit contenir que des lettres et chiffres.");
 		}
 
-		// Initialiser le crédit à 100 points
 		utilisateur.setCredit(100);
-
-		// 🔒 Hachage du mot de passe avant stockage en base
 		utilisateur.setMotDePasse(passwordEncoder.encode(utilisateur.getMotDePasse()));
-
-		// Sauvegarde en base
 		return utilisateurDao.save(utilisateur);
 	}
 
 	@Override
-	public Optional<Utilisateur> rechercherParPseudoOuEmailEtMotDePasse(String identifiant, String motDePasse) {
-		// 🔍 Recherche de l'utilisateur en base par pseudo ou email
-		Utilisateur utilisateur = utilisateurDao.findByPseudoOrEmail(identifiant, identifiant);
-
-		// Vérification du mot de passe haché avec BCrypt
-		if (utilisateur != null && passwordEncoder.matches(motDePasse, utilisateur.getMotDePasse())) {
-			return Optional.of(utilisateur);
+	public Utilisateur connexion(String identifiant, String email, String motDePasse) throws BusinessException {
+		Utilisateur utilisateur = utilisateurDao.findByPseudoOrEmail(identifiant, email);
+		if (utilisateur == null || !passwordEncoder.matches(motDePasse, utilisateur.getMotDePasse())) {
+			throw new BusinessException("Pseudo ou mot de passe incorrect.");
 		}
-		return Optional.empty(); // Mauvais mot de passe ou utilisateur inexistant
+		return utilisateur;
+	}
+
+	@Override
+	public void supprimerUtilisateur(Long noUtilisateur) throws BusinessException {
+		if (!utilisateurDao.existsById(noUtilisateur)) {
+			throw new BusinessException("L'utilisateur n'existe pas.");
+		}
+		utilisateurDao.deleteById(noUtilisateur);
 	}
 }

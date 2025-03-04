@@ -21,13 +21,17 @@ public class SecurityConfig {
                 )
                 .formLogin(login -> login
                         .loginPage("/utilisateurs/connexion")
-                        .defaultSuccessUrl("/")
+                        .defaultSuccessUrl("/accueil")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/utilisateurs/deconnexion")
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessUrl("/accueil")
                         .permitAll()
+                )
+                .rememberMe(remember -> remember
+                        .key("uniqueAndSecret")
+                        .tokenValiditySeconds(86400) // 1 jour
                 );
         return http.build();
     }

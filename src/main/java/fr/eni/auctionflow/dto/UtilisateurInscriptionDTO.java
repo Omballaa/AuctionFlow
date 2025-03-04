@@ -2,6 +2,8 @@ package fr.eni.auctionflow.dto;
 
 public class UtilisateurInscriptionDTO {
 
+    private String pseudo;
+
     private String nom;
 
     private String prenom;
@@ -16,7 +18,19 @@ public class UtilisateurInscriptionDTO {
 
     private String motDePasse;
 
+
+
     // Getters et setters
+
+
+    public String getPseudo() {
+        return pseudo;
+    }
+
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
+    }
+
     public String getNom() {
         return nom;
     }

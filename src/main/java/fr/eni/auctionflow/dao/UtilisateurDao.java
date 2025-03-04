@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UtilisateurDao extends JpaRepository<Utilisateur, Long> {
-	Utilisateur findByPseudoOrEmailAndmotDePasse(String pseudo, String email, String motDepasse);
+	Utilisateur findByPseudoOrEmailAndMotDePasse(String pseudo, String email, String motDepasse);
     Utilisateur findByPseudo(String pseudo);
     Utilisateur findByEmail(String email);
 }

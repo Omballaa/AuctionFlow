@@ -47,6 +47,12 @@ public class ArticleServiceImpl implements ArticleService {
         return articleDao.findEncheresEnCours();
     }
 
+	@Override
+	public List<Article> getMesVentes(long utilId) {
+		
+		return articleDao.findByUtilisateurNoUtilisateur(utilId);
+	}
+
 
 }
 

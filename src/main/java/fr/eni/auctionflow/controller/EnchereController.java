@@ -7,6 +7,8 @@ import fr.eni.auctionflow.model.Enchere;
 import fr.eni.auctionflow.model.Utilisateur;
 import fr.eni.auctionflow.service.ArticleService;
 import fr.eni.auctionflow.service.EnchereService;
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +34,14 @@ public class EnchereController {
         this.categorieDao = categorieDao;
     }
 
+    @GetMapping("/enchere/detail-encheres-sur-mon-article/{noArticle}")
+    public String detailEncheresSurMonArticle(long noArticle, Model model, HttpSession session) {
+    	
+    	List<Enchere> encheres = enchereService.listerEnchereArticleAppartenantAUtil(noArticle, (long) session.getAttribute("userID"));
+    	model.addAttribute("encheres", encheres);
+    	return "/enchere/detail";
+    }
+    
     // Méthode GET pour afficher la page d'ajout d'enchère avec les catégories disponibles
     @GetMapping("/ventes/ajouter")
     public String afficherFormulaireAjoutEnchere(Model model) {

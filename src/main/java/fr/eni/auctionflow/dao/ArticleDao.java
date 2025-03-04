@@ -9,6 +9,9 @@ import java.util.List;
 
 @Repository
 public interface ArticleDao extends JpaRepository<Article, Long> {
+	
+	List<Article> findByUtilisateurNoUtilisateur(long id);
+	
     List<Article> findByCategorie_noCategorie(Long noCategorie);
 
     @Query ("SELECT a FROM Article a WHERE a.dateFinEncheres > CURRENT_TIMESTAMP ")

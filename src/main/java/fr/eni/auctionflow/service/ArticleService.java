@@ -4,6 +4,7 @@ import java.util.List;
 import fr.eni.auctionflow.model.Article;
 
 public interface ArticleService {
+	List<Article> getMesVentes(long utilId);
     void supprimerArticle(Long noCategorie);
     List<Article> getAllArticles();
     Article ajouterArticle(Article article);

@@ -17,19 +17,19 @@ public class UtilisateurController {
 
     @Autowired
     private UtilisateurService utilisateurService;
-    
+
     //afficher le profil
     @GetMapping("/afficher-profil")
     public String afficherProfilGet(HttpSession session, Model model) {
-    	 if (session.getAttribute("userID") == null) { //vérifie si util est connecté
-    	     return "redirect:/utilisateurs/connexion"; //redirige vers connexion si non connecté
-    	}
-    	Utilisateur utilisateur = utilisateurService.rechercherParID((long) session.getAttribute("userID"));	
-    	model.addAttribute("util", utilisateur);
-    	return "profil";
+        if (session.getAttribute("userID") == null) { //vérifie si util est connecté
+            return "redirect:/utilisateurs/connexion"; //redirige vers connexion si non connecté
+        }
+        Utilisateur utilisateur = utilisateurService.rechercherParID((long) session.getAttribute("userID"));
+        model.addAttribute("util", utilisateur);
+        return "profil";
     }
-    
-    //modifier le profil 
+
+    //modifier le profil
     //formulaire de modification profil
     @GetMapping("/modifier-profil")
     public String modifierProfilGet(HttpSession session, Model model) {
@@ -38,9 +38,9 @@ public class UtilisateurController {
         }
         Utilisateur utilisateur = utilisateurService.rechercherParID((Long) session.getAttribute("userID"));
         model.addAttribute("util", utilisateur);
-        return "modifier-profil"; 
+        return "modifier-profil";
     }
-    
+
     //traitement de la modification profil
     @PostMapping("/modifier-profil")
     public String modifierProfilPost(@ModelAttribute("util") Utilisateur utilisateur) {
@@ -48,44 +48,44 @@ public class UtilisateurController {
         return "redirect:/utilisateurs/afficher-profil"; //redirige vers profil mis à jour
     }
 
-    
-    
+
+
     @GetMapping("/connexion")
     public String connexionGet(Model model) {
         model.addAttribute("dto", new UtilisateurConnexionDTO());
-        return "connexion"; 
+        return "connexion";
     }
-    
+
     @PostMapping("/connexion")
     public String connexionPost(
             @ModelAttribute("dto") UtilisateurConnexionDTO dto,
-            BindingResult bindingResult, HttpSession session) 
+            BindingResult bindingResult, HttpSession session)
     {
-    	//verifier si utilisateur existe en bdd
-    	Utilisateur utilisateur = utilisateurService.rechercherParPseudoOuEmailEtMotDePasse(dto.getPseudoOuEmail(), dto.getPseudoOuEmail(), dto.getMotDePasse()); 
-    	
-    	//renvoyer vers page d'erreur si connexion echouée 
-    	if (utilisateur == null) {
-    		return "erreur";
-    	}
-    	
-    	//mettre utilisateur en session
-    	session.setAttribute("userID", utilisateur.getNoUtilisateur());
-    	session.setAttribute("pseudoUtilisateur", utilisateur.getPseudo());
-    	return "redirect://";
+        //verifier si utilisateur existe en bdd
+        Utilisateur utilisateur = utilisateurService.rechercherParPseudoOuEmailEtMotDePasse(dto.getPseudoOuEmail(), dto.getPseudoOuEmail(), dto.getMotDePasse());
+
+        //renvoyer vers page d'erreur si connexion echouée
+        if (utilisateur == null) {
+            return "erreur";
+        }
+
+        //mettre utilisateur en session
+        session.setAttribute("userID", utilisateur.getNoUtilisateur());
+        session.setAttribute("pseudoUtilisateur", utilisateur.getPseudo());
+        return "redirect://";
     }
-    
+
     @GetMapping("/deconnexion")
     public String deconnexion(HttpSession session) {
-    	session.invalidate();
-    	return "redirect://";
+        session.invalidate();
+        return "redirect://";
     }
-       
+
     //afficher le formulaire d'inscription
     @GetMapping("/inscription")
     public String afficherFormulaireInscription(Model model) {
         model.addAttribute("utilisateur", new Utilisateur());
-        return "inscription"; 
+        return "inscription";
     }
 
     //traitement du formulaire d'inscription
@@ -107,6 +107,6 @@ public class UtilisateurController {
         }
 
         //redirige vers page d'accueil une fois l'inscription réussie
-        return "redirect:/";
+        return "redirect://";
     }
 }

@@ -25,13 +25,5 @@ public class VentesController {
     	return "lister-mes-ventes";
     }
     
-    @GetMapping("/")
-    public String afficherAccueil(Model model,
-                                  @RequestParam(required = false) String nomArticle,
-                                  @RequestParam(required = false) Long categorieId) {
-
-        List<Article> encheresEnCours = articleService.getEnchereEnCours(nomArticle, categorieId);
-        model.addAttribute("encheres", encheresEnCours);
-        return "accueil";
-    }
+    
 }

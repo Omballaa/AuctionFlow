@@ -21,8 +21,8 @@ public class HomeController {
 
     @GetMapping("/")
     public String afficherAccueil(HttpSession session, Model model,
-                                  @RequestParam(required = false) String nomArticle,
-                                  @RequestParam(required = false) Long categorieId) {
+                                  @RequestParam(name = "nomArticle", required = false) String nomArticle,
+                                  @RequestParam(name = "categorieId", required = false) Long categorieId) {
 
         // Vérifier si l'utilisateur est authentifié
         boolean isLoggedIn = isUserAuthenticated();

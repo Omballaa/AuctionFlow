@@ -95,7 +95,7 @@ public class UtilisateurController {
     @GetMapping("/connexion")
     public String connexionGet(Model model) {
         model.addAttribute("dto", new UtilisateurConnexionDTO());
-        return "connexion"; 
+        return "utilisateurs/connexion";  
     }
 
     @PostMapping("/connexion")
@@ -114,14 +114,14 @@ public class UtilisateurController {
     	//mettre utilisateur en session
     	session.setAttribute("userID", utilisateur.getNoUtilisateur());
     	session.setAttribute("pseudoUtilisateur", utilisateur.getPseudo());
-    	return "redirect://";
+    	return "redirect:/";
     }
 
     
     @GetMapping("/deconnexion")
     public String deconnexion(HttpSession session) {
     	session.invalidate();
-    	return "redirect://";
+    	return "redirect:/";
     }
     
 

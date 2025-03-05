@@ -7,7 +7,6 @@ import fr.eni.auctionflow.dao.UtilisateurDao;
 import fr.eni.auctionflow.exception.BusinessException;
 import fr.eni.auctionflow.model.Utilisateur;
 import jakarta.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 
 @Service

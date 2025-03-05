@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface EnchereDao extends JpaRepository<Enchere, Long> {
 
 	public List<Enchere> findByArticleNoArticleAndArticleUtilisateurNoUtilisateurOrderByDateEnchereDesc(long noArticle, long ownerId);
+
+	public Enchere findTopByArticleNoArticleOrderByMontantEnchereDesc(Long noArticle);
 }

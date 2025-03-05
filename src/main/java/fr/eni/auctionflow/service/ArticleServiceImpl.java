@@ -53,6 +53,11 @@ public class ArticleServiceImpl implements ArticleService {
 		return articleDao.findByUtilisateurNoUtilisateur(utilId);
 	}
 
+	@Override
+	public Article getArticleParNoArticle(long noArticle) {
+		return articleDao.findById(noArticle).orElse(null);
+	}
+
 
 }
 

@@ -10,4 +10,5 @@ public interface ArticleService {
     Article ajouterArticle(Article article);
     List<Article> getArticlesByCategorie(Long noCategorie);
     List<Article> getEnchereEnCours(String nomArticle, Long categorieId);
+	Article getArticleParNoArticle(long noArticle);
 }

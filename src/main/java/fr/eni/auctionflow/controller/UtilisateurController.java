@@ -34,7 +34,12 @@ public class UtilisateurController {
         if (session.getAttribute("userID") == null) {
             return "redirect:/utilisateurs/connexion";
         }
-        utilisateurService.supprimerUtilisateur((Long) session.getAttribute("userID")); //supp util
+        //utilisateurService.supprimerUtilisateur((Long) session.getAttribute("userID")); //supp util
+        try {
+			utilisateurService.supprimerUtilisateur((Long) session.getAttribute("userID"));
+		} catch (BusinessException e) {
+			e.printStackTrace();			
+		}
         session.invalidate();//déco util
         return "redirect:/"; //page accueil
     }
@@ -45,7 +50,12 @@ public class UtilisateurController {
         if (session.getAttribute("userID") == null || !utilisateurService.estAdministrateur((Long) session.getAttribute("userID"))) {
             return "redirect:/utilisateurs/connexion";
         }
-        utilisateurService.supprimerUtilisateur(id);//supp util ciblé
+        try {
+			utilisateurService.supprimerUtilisateur(id);
+		} catch (BusinessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}//supp util ciblé
         return "redirect:/admin/liste-utilisateurs"; //redirect vers liste des util
     }
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+
+<!-- Menu -->
+<nav class="bg-green-900 shadow-md py-4">
+    <div class="container mx-auto flex justify-between items-center px-6">
+        <div class="text-white text-2xl font-semibold">ENI-Enchère</div>
+        <div class="flex items-center space-x-6">
+            <a href="/" class="text-white">Accueil</a>
+            <a href="/utilisateurs/inscription" class="text-white">S'inscrire</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Formulaire de connexion -->
+<section class="p-12">
+    <div class="container mx-auto max-w-md bg-white p-8 rounded-lg shadow-md">
+        <h1 class="text-3xl font-bold mb-6 text-center">Connexion</h1>
+
+        <!-- Message d'erreur en cas d'échec de connexion -->
+        <div th:if="${erreurConnexion}" class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
+            <p th:text="${erreurConnexion}"></p>
+        </div>
+
+        <form th:action="@{/utilisateurs/connexion}" method="post">
+            <div class="mb-4">
+                <label for="identifiant" class="block text-gray-700">Pseudo ou Email</label>
+                <input type="text" id="identifiant" name="identifiant"
+                       class="px-4 py-2 w-full border border-gray-300 rounded-lg"
+                       required placeholder="Votre pseudo ou email"
+                       th:value="${dto != null ? dto.pseudo : ''}">
+            </div>
+            <div class="mb-4">
+                <label for="motDePasse" class="block text-gray-700">Mot de passe</label>
+                <input type="password" id="motDePasse" name="motDePasse"
+                       class="px-4 py-2 w-full border border-gray-300 rounded-lg"
+                       required placeholder="Votre mot de passe">
+            </div>
+            <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg w-full">
+                Se connecter
+            </button>
+        </form>
+
+        <div class="text-center mt-4">
+            <a th:href="@{/utilisateurs/inscription}" class="text-green-600">
+                Pas encore de compte ? Inscrivez-vous ici
+            </a>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

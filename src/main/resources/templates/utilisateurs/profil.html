@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+
+<!-- Menu -->
+<nav class="bg-green-900 shadow-md py-4">
+    <div class="container mx-auto flex justify-between items-center px-6">
+        <div class="text-white text-2xl font-semibold">ENI-Enchère</div>
+        <div class="flex items-center space-x-6">
+            <a href="/" class="text-white">Accueil</a>
+            <a href="/utilisateurs/deconnexion" class="text-white">Déconnexion</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Profil Utilisateur -->
+<section class="p-12">
+    <div class="container mx-auto max-w-4xl bg-white p-8 rounded-lg shadow-md">
+        <h1 class="text-3xl font-bold mb-6 text-center">Mon Profil</h1>
+
+        <p class="text-xl text-center mb-6">Bienvenue, <span th:text="${utilisateur.pseudo}" class="font-semibold text-green-600">Utilisateur</span> !</p>
+
+        <table class="w-full text-left text-gray-700">
+            <tbody>
+            <tr>
+                <th class="py-2 px-4 bg-gray-100 font-medium">Nom :</th>
+                <td class="py-2 px-4" th:text="${utilisateur.nom}">Nom</td>
+            </tr>
+            <tr>
+                <th class="py-2 px-4 bg-gray-100 font-medium">Prénom :</th>
+                <td class="py-2 px-4" th:text="${utilisateur.prenom}">Prénom</td>
+            </tr>
+            <tr>
+                <th class="py-2 px-4 bg-gray-100 font-medium">Email :</th>
+                <td class="py-2 px-4" th:text="${utilisateur.email}">Email</td>
+            </tr>
+            <tr>
+                <th class="py-2 px-4 bg-gray-100 font-medium">Adresse :</th>
+                <td class="py-2 px-4" th:text="${utilisateur.rue}">Adresse</td>
+            </tr>
+            <tr>
+                <th class="py-2 px-4 bg-gray-100 font-medium">Code Postal :</th>
+                <td class="py-2 px-4" th:text="${utilisateur.codePostal}">Code Postal</td>
+            </tr>
+            <tr>
+                <th class="py-2 px-4 bg-gray-100 font-medium">Ville :</th>
+                <td class="py-2 px-4" th:text="${utilisateur.ville}">Ville</td>
+            </tr>
+            <tr>
+                <th class="py-2 px-4 bg-gray-100 font-medium">Crédit :</th>
+                <td class="py-2 px-4" th:text="${utilisateur.credit}">Crédit</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Bouton modifier profil
+        <div class="mt-8 text-center">
+            <a href="/utilisateurs/editer" class="bg-green-600 text-white px-6 py-2 rounded-lg">Modifier mon profil</a>
+        </div> -->
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-green-900 text-white py-4 mt-12 text-center">
+    <p>© 2024 AuctionFlow</p>
+</footer>
+
+</body>
+</html>

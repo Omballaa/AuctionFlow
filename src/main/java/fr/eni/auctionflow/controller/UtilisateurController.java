@@ -1,23 +1,33 @@
 package fr.eni.auctionflow.controller;
 
-import fr.eni.auctionflow.dto.UtilisateurConnexionDTO;
-import fr.eni.auctionflow.exception.BusinessException;
-import fr.eni.auctionflow.model.Utilisateur;
-import fr.eni.auctionflow.service.UtilisateurService;
-import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import fr.eni.auctionflow.dto.UtilisateurConnexionDTO;
+import fr.eni.auctionflow.dto.UtilisateurInscriptionDTO;
+import fr.eni.auctionflow.exception.BusinessException;
+import fr.eni.auctionflow.model.Utilisateur;
+import fr.eni.auctionflow.service.UtilisateurService;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/utilisateurs")
 public class UtilisateurController {
-
+	private static final Logger logger = LoggerFactory.getLogger(UtilisateurController.class);
+	
     @Autowired
     private UtilisateurService utilisateurService;
-    
+
+
     //en tant qu'util je peux supp mon compte
     @GetMapping("/supprimer-compte")
     public String supprimerCompteGet(HttpSession session) {
@@ -77,14 +87,14 @@ public class UtilisateurController {
         model.addAttribute("dto", new UtilisateurConnexionDTO());
         return "connexion"; 
     }
-    
+
     @PostMapping("/connexion")
     public String connexionPost(
             @ModelAttribute("dto") UtilisateurConnexionDTO dto,
             BindingResult bindingResult, HttpSession session) 
     {
     	//verifier si utilisateur existe en bdd
-    	Utilisateur utilisateur = utilisateurService.rechercherParPseudoOuEmailEtMotDePasse(dto.getPseudoOuEmail(), dto.getPseudoOuEmail(), dto.getMotDePasse()); 
+    	Utilisateur utilisateur = utilisateurService.rechercherParPseudoOuEmailEtMotDePasse(dto.getPseudo(), dto.getPseudo(), dto.getMotDePasse()); 
     	
     	//renvoyer vers page d'erreur si connexion echouée 
     	if (utilisateur == null) {
@@ -96,12 +106,15 @@ public class UtilisateurController {
     	session.setAttribute("pseudoUtilisateur", utilisateur.getPseudo());
     	return "redirect://";
     }
+
     
     @GetMapping("/deconnexion")
     public String deconnexion(HttpSession session) {
     	session.invalidate();
     	return "redirect://";
     }
+    
+
        
     //afficher le formulaire d'inscription
     @GetMapping("/inscription")
@@ -110,25 +123,32 @@ public class UtilisateurController {
         return "inscription"; 
     }
 
-    //traitement du formulaire d'inscription
+        
     @PostMapping("/inscription")
-    public String traiterFormulaireInscription(
-            @ModelAttribute("utilisateur") Utilisateur utilisateur,
-            BindingResult bindingResult, Model model) {
-
-        // Si erreurs, on retourne au formulaire
-        if (bindingResult.hasErrors()) {
-            return "inscription";
-        }
+    public String traiterFormulaireInscription(@ModelAttribute("utilisateur") UtilisateurInscriptionDTO utilisateurDTO,
+                                               BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) return "utilisateurs/inscription";
 
         try {
+            Utilisateur utilisateur = new Utilisateur();
+            utilisateur.setNom(utilisateurDTO.getNom());
+            utilisateur.setPrenom(utilisateurDTO.getPrenom());
+            utilisateur.setRue(utilisateurDTO.getAdresse());
+            utilisateur.setVille(utilisateurDTO.getVille());
+            utilisateur.setCodePostal(utilisateurDTO.getCodePostal());
+            utilisateur.setEmail(utilisateurDTO.getEmail());
+            utilisateur.setPseudo(utilisateurDTO.getPseudo());
+            utilisateur.setMotDePasse(utilisateurDTO.getMotDePasse());
+
             utilisateurService.inscription(utilisateur);
         } catch (BusinessException e) {
             model.addAttribute("erreur", e.getMessage());
-            return "inscription";
+            return "utilisateurs/inscription";
         }
 
-        //redirige vers page d'accueil une fois l'inscription réussie
-        return "redirect://";
+        return "redirect:/utilisateurs/connexion";
     }
+
+
+
 }

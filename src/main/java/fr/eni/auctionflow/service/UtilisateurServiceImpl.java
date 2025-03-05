@@ -1,69 +1,80 @@
 package fr.eni.auctionflow.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import fr.eni.auctionflow.dao.UtilisateurDao;
 import fr.eni.auctionflow.exception.BusinessException;
 import fr.eni.auctionflow.model.Utilisateur;
-import jakarta.transaction.Transactional;
+
 
 @Service
 public class UtilisateurServiceImpl implements UtilisateurService {
-    @Autowired
-    private UtilisateurDao utilisateurDao;
 
-    @Override
-    public List<Utilisateur> getAllUtilisateurs() {
-        return utilisateurDao.findAll();
-    }
+	@Autowired
+	private UtilisateurDao utilisateurDao;
 
-    @Override
-    public Utilisateur getUtilisateurByPseudo(String pseudo) {
-        return utilisateurDao.findByPseudo(pseudo);
-    }
+	@Autowired
+	private PasswordEncoder passwordEncoder; // Pour hacher les mots de passe
 
-    @Override
-    public Utilisateur getUtilisateurByEmail(String email) {
-        return utilisateurDao.findByEmail(email);
-    }
+	@Override
+	public Optional<Utilisateur> getUtilisateurByPseudo(String pseudo) {
+		return Optional.ofNullable(utilisateurDao.findByPseudo(pseudo));
+	}
 
-    @Override
-    public void supprimerUtilisateur(Long noUtilisateur) {
-        utilisateurDao.deleteById(noUtilisateur);
-    }
+	@Override
+	public void supprimerUtilisateur(Long noUtilisateur) throws BusinessException {
+		if (!utilisateurDao.existsById(noUtilisateur)) {
+			throw new BusinessException("L'utilisateur n'existe pas.");
+		}
+		utilisateurDao.deleteById(noUtilisateur);
+	}
+
+	@Override
+	public Optional<Utilisateur> getUtilisateurByEmail(String email) {
+		return Optional.ofNullable(utilisateurDao.findByEmail( email));
+	}
+
 
 	@Override
 	@Transactional
 	public Utilisateur inscription(Utilisateur utilisateur) throws BusinessException {
-		
-		// Erreur si pseudo pas unique
-		if(   this.utilisateurDao.findByPseudo(utilisateur.getPseudo())!=null   ) {
-			throw new BusinessException("Ce pseudo existe déjà");
-		}
-		
-		// ainsi que l’email. 
-		if ( this.utilisateurDao.findByEmail(utilisateur.getEmail())!=null) {
-			throw new BusinessException("Cet email est déjà pris");
-		}
-		
-		// Le pseudo n’accepte que des caractères alphanumériques (CHATGPT)
-		if (!utilisateur.getPseudo().matches("^[a-zA-Z0-9]+$")) {
-		    throw new BusinessException("Le pseudo ne doit contenir que des lettres et chiffres.");
+		// Vérifier si le pseudo est unique
+		if (utilisateurDao.findByPseudo(utilisateur.getPseudo()) != null) {
+			throw new BusinessException("Ce pseudo existe déjà.");
 		}
 
-		
-		//Un crédit initial de 100 points est alloué à la création du compte.
+		// Vérifier si l’email est unique
+		if (utilisateurDao.findByEmail(utilisateur.getEmail()) != null) {
+			throw new BusinessException("Cet email est déjà pris.");
+		}
+
+		// Vérifier si le pseudo est valide (alphanumérique uniquement)
+		if (!utilisateur.getPseudo().matches("^[a-zA-Z0-9]+$")) {
+			throw new BusinessException("Le pseudo ne doit contenir que des lettres et chiffres.");
+		}
+
+		// Initialiser le crédit à 100 points
 		utilisateur.setCredit(100);
-		
-		// Ajout util en BD
-		return utilisateurDao.save(utilisateur);
+
+		// 🔒 Hachage du mot de passe avant stockage en base
+		utilisateur.setMotDePasse(passwordEncoder.encode(utilisateur.getMotDePasse()));
+
+		// Sauvegarde en base
+		Utilisateur returnUtilisateur = utilisateurDao.save(utilisateur);
+		return returnUtilisateur;
 	}
 
 	@Override
 	public Utilisateur rechercherParPseudoOuEmailEtMotDePasse(String pseudo, String email, String motDePasse) {
+		Utilisateur user = utilisateurDao.findByPseudoOrEmail(pseudo, email);
 		
-		return utilisateurDao.findByPseudoOrEmailAndmotDePasse(pseudo, email, motDePasse);
+		return user;
 	}
 
 	@Override
@@ -91,4 +102,21 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
 
 
+	public Utilisateur connexion(String identifiant, String email, String motDePasse) throws BusinessException {
+		// 🔍 Recherche de l'utilisateur en base par pseudo ou email
+		Utilisateur utilisateur = utilisateurDao.findByPseudoOrEmail(identifiant, email);
+
+		// Vérification du mot de passe haché avec BCrypt
+		if (utilisateur == null || !passwordEncoder.matches(motDePasse, utilisateur.getMotDePasse())) {
+			throw new BusinessException("Identifiants incorrects.");
+		}
+
+		return utilisateur;
+	}
+
+	@Override
+	public List<Utilisateur> getAllUtilisateurs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

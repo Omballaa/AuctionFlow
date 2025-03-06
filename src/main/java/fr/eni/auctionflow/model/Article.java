@@ -16,6 +16,7 @@ public class Article {
     private Date dateFinEncheres;
     private Integer prixInitial;
     private Integer prixVente;
+    @Column(name = "vente_cloturee", nullable = false)
     private boolean venteCloturee = false;
 
     @ManyToOne

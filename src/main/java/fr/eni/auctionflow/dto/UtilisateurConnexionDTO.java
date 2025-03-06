@@ -1,25 +1,32 @@
 package fr.eni.auctionflow.dto;
 
 public class UtilisateurConnexionDTO {
-	
-	private String pseudoOuEmail ;
-	
-	private String motDePasse ;
 
-	public String getPseudoOuEmail() {
-		return pseudoOuEmail;
-	}
+    private String pseudo;
+    private String email;
+    private String motDePasse ;
 
-	public void setPseudoOuEmail(String pseudoOuEmail) {
-		this.pseudoOuEmail = pseudoOuEmail;
-	}
+    public String getPseudo() {
+        return pseudo;
+    }
 
-	public String getMotDePasse() {
-		return motDePasse;
-	}
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
+    }
 
-	public void setMotDePasse(String motDePasse) {
-		this.motDePasse = motDePasse;
-	}
+    public String getEmail() {
+        return email;
+    }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMotDePasse() {
+        return motDePasse;
+    }
+
+    public void setMotDePasse(String motDePasse) {
+        this.motDePasse = motDePasse;
+    }
 }

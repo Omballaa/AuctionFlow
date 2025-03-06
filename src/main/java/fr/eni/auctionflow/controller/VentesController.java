@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @Controller
-public class ArticlesController {
+public class VentesController {
 
     @Autowired
     private ArticleService articleService;
@@ -25,13 +25,5 @@ public class ArticlesController {
     	return "lister-mes-ventes";
     }
     
-    @GetMapping("/")
-    public String afficherAccueil(Model model,
-                                  @RequestParam(required = false) String nomArticle,
-                                  @RequestParam(required = false) Long categorieId) {
-
-        List<Article> encheresEnCours = articleService.getEnchereEnCours(nomArticle, categorieId);
-        model.addAttribute("encheres", encheresEnCours);
-        return "accueil";
-    }
+    
 }

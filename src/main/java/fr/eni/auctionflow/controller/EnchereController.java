@@ -1,6 +1,7 @@
 package fr.eni.auctionflow.controller;
 
 import fr.eni.auctionflow.dao.CategorieDao;
+import fr.eni.auctionflow.dto.EncherirDTO;
 import fr.eni.auctionflow.model.Article;
 import fr.eni.auctionflow.model.Categorie;
 import fr.eni.auctionflow.model.Enchere;
@@ -13,10 +14,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,47 @@ public class EnchereController {
         this.articleService = articleService;
         this.categorieDao = categorieDao;
     }
+    
+    @GetMapping("/enchrir/{noArticle}")
+    public String encherirGET(@RequestParam long noArticle, Model model) {
+    	
+    	Article article = articleService.getArticleParNoArticle(noArticle);
+    	EncherirDTO dto = new EncherirDTO();
+    	dto.setNoArticle(noArticle);// THEO : un champ hidden
+    	Enchere topEnchere = enchereService.getMeilleureEnchere(dto.getNoArticle());
+    	dto.setMontantEnchere(topEnchere.getMontantEnchere() + 1);
+    	
+    	model.addAttribute("article", article);
+    	model.addAttribute("dto", dto);
+    	
+    	return "/nomDeLaVueQuiAfficheLesEncherechesDeArtiucleEtFormPourEnchere";
+    }
+    
+    //Encherir 
+    @PostMapping("/encherir")
+    public String encherirPOST(
+    		@ModelAttribute(name = "dto") EncherirDTO encherirDTO,
+            HttpSession session,
+            Model model
+    		) {
+
+        // Vérifier si l'utilisateur est connecté
+        if (session.getAttribute("userID") == null) {
+            return "redirect:/utilisateurs/connexion";
+        }
+
+        Long userID = (Long) session.getAttribute("userID");
+
+        try {
+            enchereService.encherir(encherirDTO.getNoArticle(), userID, encherirDTO.getMontantEnchere());
+            model.addAttribute("message", "Votre enchère a été prise en compte !");
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/enchere/detail/" + encherirDTO.getNoArticle();
+    }
+
 
     @GetMapping("/enchere/detail-encheres-sur-mon-article/{noArticle}")
     public String detailEncheresSurMonArticle(long noArticle, Model model, HttpSession session) {

@@ -16,6 +16,7 @@ public class Article {
     private Date dateFinEncheres;
     private Integer prixInitial;
     private Integer prixVente;
+    private boolean venteCloturee = false;
 
     @ManyToOne
     @JoinColumn(name = "no_utilisateur")
@@ -44,4 +45,11 @@ public class Article {
     public void setUtilisateur(Utilisateur utilisateur) { this.utilisateur = utilisateur; }
     public Categorie getCategorie() { return categorie; }
     public void setCategorie(Categorie categorie) { this.categorie = categorie; }
+	public boolean isVenteCloturee() {
+		return venteCloturee;
+	}
+	public void setVenteCloturee(boolean venteCloturee) {
+		this.venteCloturee = venteCloturee;
+	}
+    
 }

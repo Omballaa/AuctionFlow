@@ -130,7 +130,7 @@ public class UtilisateurController {
     @GetMapping("/inscription")
     public String afficherFormulaireInscription(Model model) {
         model.addAttribute("utilisateur", new Utilisateur());
-        return "redirect:/utilisateurs/inscription"; 
+        return "utilisateurs/inscription"; 
     }
 
         

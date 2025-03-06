@@ -31,8 +31,8 @@
 
         <form th:action="@{/utilisateurs/connexion}" method="post">
             <div class="mb-4">
-                <label for="identifiant" class="block text-gray-700">Pseudo ou Email</label>
-                <input type="text" id="identifiant" name="identifiant"
+                <label for="pseudo" class="block text-gray-700">Pseudo ou Email</label>
+                <input type="text" id="pseudo" name="pseudo"
                        class="px-4 py-2 w-full border border-gray-300 rounded-lg"
                        required placeholder="Votre pseudo ou email"
                        th:value="${dto != null ? dto.pseudo : ''}">

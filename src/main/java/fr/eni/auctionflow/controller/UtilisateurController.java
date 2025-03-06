@@ -100,11 +100,12 @@ public class UtilisateurController {
 
     @PostMapping("/connexion")
     public String connexionPost(
-            @ModelAttribute("dto") UtilisateurConnexionDTO dto,
-            BindingResult bindingResult, HttpSession session) 
+    @ModelAttribute("dto") UtilisateurConnexionDTO dto,
+    BindingResult bindingResult, HttpSession session) 
     {
-    	//verifier si utilisateur existe en bdd
-    	Utilisateur utilisateur = utilisateurService.rechercherParPseudoOuEmailEtMotDePasse(dto.getPseudo(), dto.getPseudo(), dto.getMotDePasse()); 
+        
+        //verifier si utilisateur existe en bdd
+    	Utilisateur utilisateur = utilisateurService.rechercherParPseudoOuEmailEtMotDePasse(dto.getLogin(), dto.getLogin(), dto.getMotDePasse()); 
     	
     	//renvoyer vers page d'erreur si connexion echouée 
     	if (utilisateur == null) {
@@ -135,8 +136,10 @@ public class UtilisateurController {
 
         
     @PostMapping("/inscription")
-    public String traiterFormulaireInscription(@ModelAttribute("utilisateur") UtilisateurInscriptionDTO utilisateurDTO,
-                                               BindingResult bindingResult, Model model) {
+    public String traiterFormulaireInscription(
+    @ModelAttribute("utilisateur") UtilisateurInscriptionDTO utilisateurDTO,
+    BindingResult bindingResult, Model model) {
+
         if (bindingResult.hasErrors()) return "utilisateurs/inscription";
 
         try {

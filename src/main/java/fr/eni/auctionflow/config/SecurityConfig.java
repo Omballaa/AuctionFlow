@@ -22,6 +22,7 @@ public class SecurityConfig {
                 .formLogin(login -> login
                         .loginPage("/utilisateurs/connexion")
                         .defaultSuccessUrl("/accueil")
+                        .failureUrl("/utilisateurs/connexion?invalidCreditentials")
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -35,6 +36,7 @@ public class SecurityConfig {
                 );
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

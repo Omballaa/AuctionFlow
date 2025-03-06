@@ -25,23 +25,25 @@
         <h1 class="text-3xl font-bold mb-6 text-center">Connexion</h1>
 
         <!-- Message d'erreur en cas d'échec de connexion -->
-        <div th:if="${erreurConnexion}" class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
-            <p th:text="${erreurConnexion}"></p>
+        <div th:if="${param.invalidCreditentials}" class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
+            <p>Identifiants invalides. Veuillez réessayer.</p>
         </div>
 
-        <form th:action="@{/utilisateurs/connexion}" method="post">
+
+        <form th:action="@{/login}" method="post">
             <div class="mb-4">
-                <label for="pseudo" class="block text-gray-700">Pseudo ou Email</label>
-                <input type="text" id="pseudo" name="pseudo"
+                <label for="login" class="block text-gray-700">Pseudo ou Email</label>
+                <input type="text" id="login" name="username"
                        class="px-4 py-2 w-full border border-gray-300 rounded-lg"
                        required placeholder="Votre pseudo ou email"
-                       th:value="${dto != null ? dto.pseudo : ''}">
+                       th:value="${dto != null ? dto.login : ''}">
             </div>
             <div class="mb-4">
                 <label for="motDePasse" class="block text-gray-700">Mot de passe</label>
-                <input type="password" id="motDePasse" name="motDePasse"
+                <input type="password" id="motDePasse" name="password"
                        class="px-4 py-2 w-full border border-gray-300 rounded-lg"
-                       required placeholder="Votre mot de passe">
+                       required placeholder="Votre mot de passe"
+                       th:value="${dto != null ? dto.motDePasse : ''}">
             </div>
             <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg w-full">
                 Se connecter

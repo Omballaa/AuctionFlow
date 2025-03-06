@@ -50,7 +50,7 @@ public class Article {
 		return venteCloturee;
 	}
 	public void setVenteCloturee(boolean venteCloturee) {
-		this.venteCloturee = venteCloturee;
+        this.venteCloturee = venteCloturee;
 	}
     
 }

@@ -25,17 +25,18 @@ public class HomeController {
                                   @RequestParam(required = false) Long categorieId) {
 
         // Vérifier si l'utilisateur est authentifié
-        boolean isLoggedIn = isUserAuthenticated();
+        if (isUserAuthenticated()) {
+            return "redirect:/dashboard"; // Redirige vers une autre page si l'utilisateur est connecté
+        }
 
         // Ajouter les articles en cours dans le modèle
         List<Article> encheresEnCours = articleService.getEnchereEnCours(nomArticle, categorieId);
         model.addAttribute("encheres", encheresEnCours);
+        model.addAttribute("isLoggedIn", false);
 
-        // Ajouter la variable isLoggedIn pour conditionner l'affichage sur la page
-        model.addAttribute("isLoggedIn", isLoggedIn);
-
-        return "accueil"; // Retourne la vue d'accueil
+        return "home"; // Affiche la page d'accueil pour les utilisateurs non connectés
     }
+
 
     // Méthode pour vérifier si l'utilisateur est authentifié
     private boolean isUserAuthenticated() {

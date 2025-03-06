@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +56,7 @@ public class EnchereController {
         Optional<Categorie> categorieOptional = categorieDao.findById(no_Categorie);
         if (categorieOptional.isEmpty()) {
             model.addAttribute("error", "Catégorie introuvable !");
-            return "accueil";
+            return "home";
         }
         Categorie categorie = categorieOptional.get();
 
@@ -88,6 +87,6 @@ public class EnchereController {
         enchereService.ajouterEnchere(enchere);
 
         model.addAttribute("message", "L'enchère a été ajoutée avec succès !");
-        return "accueil";
+        return "home";
     }
 }

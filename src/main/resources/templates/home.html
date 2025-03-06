@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,16 +14,16 @@
         <div class="text-white text-2xl font-semibold">ENI-Enchère</div>
 
         <!-- Barre de navigation pour les utilisateurs non connectés -->
-        <div class="flex items-center space-x-6" id="auth-links" th:if="${not isLoggedIn}">
-            <a href="/utilisateurs/connexion" class="bg-[#8B5A2B] text-white px-4 py-2 rounded-full border border-[#3f2204] hover:bg-[#3f2204] transition">Se connecter / S'inscrire</a>
+        <div class="flex items-center space-x-6" sec:authorize="!isAuthenticated()">
+            <a href="@{/login}" class="bg-[#8B5A2B] text-white px-4 py-2 rounded-full border border-[#3f2204] hover:bg-[#3f2204] transition">Se connecter / S'inscrire</a>
         </div>
 
         <!-- Menu utilisateur pour les utilisateurs connectés -->
-        <div class="flex space-x-6 hidden" id="user-menu" th:if="${isLoggedIn}">
-            <a href="#" class="text-white">Enchères</a>
+        <div class="flex space-x-6" sec:authorize="isAuthenticated()">
+            <a href="/encheres" class="text-white">Enchères</a>
             <a href="/ventes/ajouter" class="text-white">Vendre un article</a>
             <a href="/utilisateurs/profil" class="text-white">Mon profil</a>
-            <a href="/utilisateurs/deconnexion" class="text-white">Déconnexion</a>
+            <a href="@{/logout}" class="text-white">Déconnexion</a>
         </div>
     </div>
 </nav>
@@ -34,9 +34,9 @@
         <h1 class="text-5xl font-bold text-gray-800 mb-4 text-center">Eni-Enchères</h1>
         <p class="text-lg text-gray-600">Découvrez les enchères en cours et trouvez des offres exclusives.</p>
 
-        <!-- Formulaire de recherche (si nécessaire) -->
-        <form action="/" method="get" class="flex items-center space-x-4 mt-4" id="search-form">
-            <input type="text" name="nomArticle" placeholder="Rechercher par nom..." class="px-4 py-2 w-1/2 rounded-full border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none" id="search-input">
+        <!-- Formulaire de recherche -->
+        <form action="/" method="get" class="flex items-center space-x-4 mt-4">
+            <input type="text" name="nomArticle" placeholder="Rechercher par nom..." class="px-4 py-2 w-1/2 rounded-full border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none">
 
             <!-- Sélecteur de catégorie -->
             <div class="relative">
@@ -49,13 +49,9 @@
                 </div>
             </div>
 
-            <!-- Input caché pour l'ID de catégorie -->
             <input type="hidden" id="category-id" name="categorieId" value="">
 
-            <!-- Bouton de filtrage -->
             <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-800 transition">Filtrer</button>
-
-            <!-- Bouton pour réinitialiser les filtres -->
             <button type="button" id="reset-filters" class="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-800 transition">Réinitialiser</button>
         </form>
 
@@ -64,12 +60,9 @@
                 <!-- Affichage des enchères -->
                 <div th:each="article : ${encheres}" class="bg-white shadow-lg rounded-lg p-4">
                     <img th:src="@{https://placehold.jp/3d4070/ffffff/150x150.png}" class="w-full h-40 object-cover rounded-md">
-                    <h3 th:text="|${article.nomArticle}|"
-                        class="text-xl font-semibold mt-2"></h3>
-                    <p th:text="|Prix de départ : ${article.prixInitial} pts |"
-                       class="text-gray-700"></p>
-                    <p th:text="|Fin : ${#dates.format(article.dateFinEncheres, 'dd/MM/yyyy')}|"
-                       class="text-gray-500 text-sm"></p>
+                    <h3 th:text="${article.nomArticle}" class="text-xl font-semibold mt-2"></h3>
+                    <p th:text="|Prix de départ : ${article.prixInitial} pts|" class="text-gray-700"></p>
+                    <p th:text="|Fin : ${#dates.format(article.dateFinEncheres, 'dd/MM/yyyy')}|" class="text-gray-500 text-sm"></p>
                     <button class="bg-green-600 text-white px-4 py-2 mt-3 rounded-md hover:bg-green-800 transition">Voir l'enchère</button>
                 </div>
             </div>
@@ -78,22 +71,11 @@
 </section>
 
 <script>
-    const isLoggedIn =  /*[[${isLoggedIn}]]*/ false;
-
-    // Logique pour afficher/masquer les menus
-    if (isLoggedIn) {
-        const userMenu = document.getElementById('user-menu');
-        const authLinks = document.getElementById('auth-links');
-        if (userMenu) userMenu.classList.remove('hidden');
-        if (authLinks) authLinks.classList.add('hidden');
-    }
-
     document.getElementById("dropdown-btn").addEventListener("click", function(event) {
-        event.stopPropagation(); // Empêche la soumission du formulaire
+        event.stopPropagation();
         document.getElementById("dropdown-menu").classList.toggle("hidden");
     });
 
-    // Ajoute un gestionnaire d'événement pour fermer le menu déroulant si on clique en dehors
     document.addEventListener("click", function(event) {
         if (!document.getElementById("dropdown-btn").contains(event.target)) {
             document.getElementById("dropdown-menu").classList.add("hidden");
@@ -105,19 +87,11 @@
         document.getElementById("dropdown-menu").classList.add("hidden");
     }
 
-    // Réinitialiser les filtres
     document.getElementById("reset-filters").addEventListener("click", function() {
-        // Réinitialiser le champ de recherche
         document.getElementById("search-input").value = "";
-
-        // Réinitialiser la catégorie sélectionnée
         document.getElementById("category-id").value = "";
-
-        // Fermer le menu déroulant
         document.getElementById("dropdown-menu").classList.add("hidden");
-
-        // Rediriger vers la page d'accueil (menu d'accueil de base)
-        window.location.href = "/";  // Remplacez par l'URL de votre page d'accueil
+        window.location.href = "/";
     });
 </script>
 

@@ -14,7 +14,7 @@
         <div class="text-white text-2xl font-semibold">ENI-Enchère</div>
         <div class="flex items-center space-x-6">
             <a href="/" class="text-white">Accueil</a>
-            <a href="/utilisateurs/inscription" class="text-white">S'inscrire</a>
+            <a href="/register" class="text-white">S'inscrire</a>
         </div>
     </div>
 </nav>
@@ -29,7 +29,7 @@
             <p th:text="${erreurConnexion}"></p>
         </div>
 
-        <form th:action="@{/utilisateurs/connexion}" method="post">
+        <form th:action="@{/login}" method="post">
             <div class="mb-4">
                 <label for="identifiant" class="block text-gray-700">Pseudo ou Email</label>
                 <input type="text" id="identifiant" name="identifiant"
@@ -49,7 +49,7 @@
         </form>
 
         <div class="text-center mt-4">
-            <a th:href="@{/utilisateurs/inscription}" class="text-green-600">
+            <a href="/register" class="text-green-600">
                 Pas encore de compte ? Inscrivez-vous ici
             </a>
         </div>

@@ -25,7 +25,7 @@ public class EnchereUserDetailService implements UserDetailsService{
         
         System.out.println("tenative de connexion avec le login : " + username);
 
-        Utilisateur user = userDao.findByEmail(username);
+        Utilisateur user = userDao.findByEmail(username.toLowerCase());
         
         if (user == null) {
             System.out.println("Aucun utilisateur trouvé avec l'email : " + username);

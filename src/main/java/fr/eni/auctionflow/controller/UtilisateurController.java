@@ -99,6 +99,18 @@ public class UtilisateurController {
     }
 
     @PostMapping("/connexion")
+    public String connexionPost(Model model, HttpSession session) {
+        
+        // Vérifier si l'utilisateur est déjà authentifié
+        if (session.getAttribute("userID") != null) {
+            return "redirect:/"; // Redirige vers l'accueil si déjà connecté
+        }
+        
+        return "redirect:/utilisateurs/connexion?invalidCredentials"; // Redirige vers connexion avec erreur
+    }
+
+
+    // @PostMapping("/connexion")
     public String connexionPost(
     @ModelAttribute("dto") UtilisateurConnexionDTO dto,
     BindingResult bindingResult, HttpSession session) 

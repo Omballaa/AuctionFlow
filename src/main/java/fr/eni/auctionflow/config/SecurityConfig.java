@@ -21,7 +21,8 @@ public class SecurityConfig {
                 )
                 .formLogin(login -> login
                         .loginPage("/utilisateurs/connexion")
-                        .defaultSuccessUrl("/accueil")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/")
                         .failureUrl("/utilisateurs/connexion?invalidCreditentials")
                         .permitAll()
                 )

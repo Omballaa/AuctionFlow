@@ -24,11 +24,11 @@
     <div class="container mx-auto max-w-md bg-white p-8 rounded-lg shadow-md">
         <h1 class="text-3xl font-bold mb-6 text-center">Connexion</h1>
 
+       
         <!-- Message d'erreur en cas d'échec de connexion -->
         <div th:if="${param.invalidCreditentials}" class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
             <p>Identifiants invalides. Veuillez réessayer.</p>
         </div>
-
 
         <form th:action="@{/login}" method="post">
             <div class="mb-4">

@@ -13,16 +13,24 @@
 
 <!-- Formulaire d'ajout d'enchère -->
 <section class="flex justify-center items-center min-h-screen p-6">
-    <div class="bg-white shadow-lg rounded-lg p-8 w-96 border border-gray-300">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-[32rem] border border-gray-300">
         <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Ajouter une enchère</h1>
-        <form action="/ventes/ajouter" method="POST" class="space-y-4">
+        
+        <!-- Affichage des erreurs -->
+        <div th:if="${error}" class="bg-red-100 text-red-700 p-3 mb-4 rounded-lg text-center">
+            <span th:text="${error}"></span>
+        </div>
+
+        <form action="/ventes/ajouter" method="POST" class="space-y-4" onsubmit="return validateForm()">
             <div>
                 <label for="articleName" class="block text-gray-700 font-medium">Nom de l'article</label>
                 <input type="text" id="articleName" name="articleName" class="px-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required>
+                <p id="error-articleName" class="text-red-500 text-sm hidden">Veuillez renseigner le nom de l'article.</p>
             </div>
             <div>
                 <label for="articleDescription" class="block text-gray-700 font-medium">Description</label>
                 <textarea id="articleDescription" name="articleDescription" class="px-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required></textarea>
+                <p id="error-articleDescription" class="text-red-500 text-sm hidden">Veuillez ajouter une description.</p>
             </div>
             <div>
                 <label for="categorie" class="block text-gray-700 font-medium">Catégorie</label>
@@ -32,23 +40,108 @@
                         <option th:value="${categorie.noCategorie}" th:text="${categorie.libelle}"></option>
                     </th:block>
                 </select>
+                <p id="error-categorie" class="text-red-500 text-sm hidden">Veuillez sélectionner une catégorie.</p>
             </div>
             <div>
                 <label for="startingPrice" class="block text-gray-700 font-medium">Mise à prix</label>
                 <input type="number" id="startingPrice" name="startingPrice" class="px-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required>
+                <p id="error-startingPrice" class="text-red-500 text-sm hidden">Le prix initial doit être supérieur à 0.</p>
             </div>
             <div>
                 <label for="startDate" class="block text-gray-700 font-medium">Date de début</label>
                 <input type="datetime-local" id="startDate" name="startDate" class="px-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required>
+                <p id="error-startDate" class="text-red-500 text-sm hidden">La date de début doit être ultérieure ou égale à aujourd’hui.</p>
             </div>
             <div>
                 <label for="endDate" class="block text-gray-700 font-medium">Date de fin</label>
                 <input type="datetime-local" id="endDate" name="endDate" class="px-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required>
+                <p id="error-endDate" class="text-red-500 text-sm hidden">La date de fin doit être postérieure à la date de début.</p>
             </div>
             <button type="submit" class="bg-green-600 text-white px-6 py-2 w-full rounded-lg hover:bg-green-800 transition">Ajouter l'enchère</button>
         </form>
     </div>
 </section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function pad(n) {
+            return n < 10 ? '0' + n : n;
+        }
+    
+        // Obtenir la date actuelle
+        let now = new Date();
+    
+        // Ajouter 5 minutes pour la date de début
+        now.setMinutes(now.getMinutes() + 5);
+        let startDateValue = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) +
+            'T' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+    
+        // Ajouter 24 heures pour la date de fin
+        now.setHours(now.getHours() + 24);
+        let endDateValue = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) +
+            'T' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+    
+        // Appliquer les valeurs par défaut aux champs
+        document.getElementById("startDate").value = startDateValue;
+        document.getElementById("endDate").value = endDateValue;
+    
+        // Empêcher la sélection d'une date antérieure à maintenant
+        let todayISO = new Date().toISOString().slice(0, 16); // Format YYYY-MM-DDTHH:MM
+        document.getElementById("startDate").min = todayISO;
+    
+        document.getElementById("startDate").addEventListener("change", function () {
+            let selectedStart = new Date(this.value);
+            let minEndDate = new Date(selectedStart);
+            minEndDate.setHours(minEndDate.getHours() + 24); // Minimum 24h après début
+            document.getElementById("endDate").min = minEndDate.toISOString().slice(0, 16);
+        });
+    });
+
+
+
+    function validateForm() {
+        let isValid = true;
+        let now = new Date();
+        let startDate = new Date(document.getElementById("startDate").value);
+        let endDate = new Date(document.getElementById("endDate").value);
+        let price = document.getElementById("startingPrice").value;
+        let errors = {
+            articleName: "Veuillez renseigner le nom de l'article.",
+            categorie: "Veuillez sélectionner une catégorie.",
+            startingPrice: "Le prix initial doit être supérieur à 0.",
+            startDate: "La date de début doit être ultérieure ou égale à aujourd’hui.",
+            endDate: "La date de fin doit être postérieure à la date de début."
+        };
+
+        // Reset all error messages
+        Object.keys(errors).forEach(key => {
+            document.getElementById("error-" + key).classList.add("hidden");
+        });
+
+        if (document.getElementById("articleName").value.trim() === "") {
+            document.getElementById("error-articleName").classList.remove("hidden");
+            isValid = false;
+        }
+        if (document.getElementById("categorie").value === "") {
+            document.getElementById("error-categorie").classList.remove("hidden");
+            isValid = false;
+        }
+        if (price <= 0) {
+            document.getElementById("error-startingPrice").classList.remove("hidden");
+            isValid = false;
+        }
+        if (startDate < now) {
+            document.getElementById("error-startDate").classList.remove("hidden");
+            isValid = false;
+        }
+        if (endDate <= startDate) {
+            document.getElementById("error-endDate").classList.remove("hidden");
+            isValid = false;
+        }
+
+        return isValid;
+    }
+</script>
 
 </body>
 </html>

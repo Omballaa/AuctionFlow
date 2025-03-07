@@ -106,7 +106,7 @@ public class UtilisateurController {
     @GetMapping("/deconnexion")
     public String deconnexion(HttpSession session) {
     	session.invalidate();
-    	return "redirect:/";
+    	return "accueil";
     }
     
 

@@ -10,6 +10,7 @@ public interface UtilisateurDao extends JpaRepository<Utilisateur, Long> {
     Utilisateur findByPseudoOrEmail(String identifiant, String email);
     Utilisateur findByEmail(String email);
     Utilisateur findByPseudo(String pseudo);
+    Utilisateur findBynoUtilisateur(Long noUtilisateur);
     boolean existsByEmail(String email);
     boolean existsByPseudo(String pseudo);
 }

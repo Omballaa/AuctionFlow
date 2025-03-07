@@ -1,6 +1,7 @@
 package fr.eni.auctionflow.controller;
 
 import fr.eni.auctionflow.dao.CategorieDao;
+import fr.eni.auctionflow.dao.UtilisateurDao;
 import fr.eni.auctionflow.dto.EncherirDTO;
 import fr.eni.auctionflow.model.Article;
 import fr.eni.auctionflow.model.Categorie;
@@ -8,8 +9,10 @@ import fr.eni.auctionflow.model.Enchere;
 import fr.eni.auctionflow.model.Utilisateur;
 import fr.eni.auctionflow.service.ArticleService;
 import fr.eni.auctionflow.service.EnchereService;
+import fr.eni.auctionflow.service.UtilisateurService;
 import jakarta.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -18,7 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.security.core.Authentication;
 
 import java.util.Date;
@@ -35,6 +38,16 @@ public class EnchereController {
         System.out.println("DEBUG: Authentication = " + SecurityContextHolder.getContext().getAuthentication());
         return authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String);
     }
+    
+    private Utilisateur getUserAuthenticated() 
+    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String)) {
+            return UtilisateurServiceImpl.findByPseudoOrEmail(authentication.getName(), authentication.getName()); // Retourne le nom d'utilisateur
+        }
+        return null; // Aucun utilisateur authentifié
+    }
+
 
 
     private final EnchereService enchereService;
@@ -47,6 +60,9 @@ public class EnchereController {
         this.categorieDao = categorieDao;
     }
     
+    @Autowired
+    private UtilisateurDao utilisateurDao;
+
 
 
     @GetMapping("/enchrir/{noArticle}")
@@ -118,53 +134,92 @@ public class EnchereController {
     }
 
 
-    // Méthode POST pour ajouter l'enchère
     @PostMapping("/ventes/ajouter")
-    public String ajouterEnchere(
-            @RequestParam String articleName,
-            @RequestParam String articleDescription,
-            @RequestParam Long no_Categorie,
-            @RequestParam Integer startingPrice,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date endDate,
-            @RequestParam Long utilisateurId,
-            Model model
-    ) {
-        // Récupérer la catégorie
-        Optional<Categorie> categorieOptional = categorieDao.findById(no_Categorie);
-        if (categorieOptional.isEmpty()) {
-            model.addAttribute("error", "Catégorie introuvable !");
-            return "accueil";
-        }
-        Categorie categorie = categorieOptional.get();
+public String ajouterEnchere(
+        @RequestParam String articleName,
+        @RequestParam String articleDescription,
+        @RequestParam Long no_Categorie,
+        @RequestParam Integer startingPrice,
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date startDate,
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date endDate,
+        HttpSession session,
+        Model model,
+        RedirectAttributes redirectAttributes // Ajout pour gérer les messages après redirection
+) {
 
-        // Récupérer l'utilisateur (à implémenter dans un UserService)
-        Utilisateur utilisateur = new Utilisateur(); // ⚠️ Remplace ceci par une vraie récupération depuis la base
-        utilisateur.setNoUtilisateur(utilisateurId);
+    Long userID = (Long) session.getAttribute("userID");
 
-        // Création de l'article
-        Article article = new Article();
-        article.setNomArticle(articleName);
-        article.setDescription(articleDescription);
-        article.setCategorie(categorie);
-        article.setPrixInitial(startingPrice);
-        article.setDateDebutEncheres(startDate);
-        article.setDateFinEncheres(endDate);
-        article.setUtilisateur(utilisateur);
+    boolean isLoggedIn = isUserAuthenticated();
 
-        // Sauvegarder l'article
-        article = articleService.ajouterArticle(article);
+    System.out.println("DEBUG: Demande d'ajout d'une enchère : " + articleName);
+    System.out.println("DEBUG: isLoggedIn : " + isLoggedIn);
+    System.out.println("UserId session : " + userID);
 
-        // Création de l'enchère
-        Enchere enchere = new Enchere();
-        enchere.setArticle(article);
-        enchere.setMontantEnchere(startingPrice);
-        enchere.setDateEnchere(new Date());
-
-        // Sauvegarde de l'enchère
-        enchereService.ajouterEnchere(enchere);
-
-        model.addAttribute("message", "L'enchère a été ajoutée avec succès !");
-        return "accueil";
+    // Vérifier que tous les champs obligatoires sont bien remplis
+    if (articleName.isBlank() || articleDescription.isBlank() || no_Categorie == null || startingPrice == null || startDate == null || endDate == null) {
+        model.addAttribute("error", "Tous les champs doivent être renseignés.");
+        return "ventes/ajouter";
     }
+
+    // Vérifier que la mise à prix est positive
+    if (startingPrice <= 0) {
+        model.addAttribute("error", "Le prix initial doit être supérieur à 0.");
+        return "ventes/ajouter";
+    }
+
+    // Vérifier que la catégorie existe bien
+    Optional<Categorie> categorieOptional = categorieDao.findById(no_Categorie);
+    if (categorieOptional.isEmpty()) {
+        model.addAttribute("error", "Catégorie introuvable !");
+        return "ventes/ajouter";
+    }
+    Categorie categorie = categorieOptional.get();
+
+    // Vérifier que la date de début est >= aujourd’hui
+    Date now = new Date();
+    if (startDate.before(now)) {
+        model.addAttribute("error", "La date de début ne peut pas être inférieure à aujourd’hui.");
+        return "ventes/ajouter";
+    }
+
+    // Vérifier que la date de fin est > date de début
+    if (!endDate.after(startDate)) {
+        model.addAttribute("error", "La date de fin doit être postérieure à la date de début.");
+        return "ventes/ajouter";
+    }
+
+    // Récupérer l'utilisateur connecté (via Spring Security)
+    Utilisateur utilisateur = utilisateurDao.findBynoUtilisateur(userID);
+    if (utilisateur == null) {
+        model.addAttribute("error", "Utilisateur non trouvé.");
+        return "ventes/ajouter";
+    }
+
+    // Création de l'article
+    Article article = new Article();
+    article.setNomArticle(articleName);
+    article.setDescription(articleDescription);
+    article.setCategorie(categorie);
+    article.setPrixInitial(startingPrice);
+    article.setDateDebutEncheres(startDate);
+    article.setDateFinEncheres(endDate);
+    article.setUtilisateur(utilisateur);
+
+    // Sauvegarder l'article
+    article = articleService.ajouterArticle(article);
+
+    // Création de l'enchère de base
+    Enchere enchere = new Enchere();
+    enchere.setArticle(article);
+    enchere.setMontantEnchere(startingPrice);
+    enchere.setDateEnchere(new Date());
+
+    // Sauvegarde de l'enchère
+    enchereService.ajouterEnchere(enchere);
+
+    // Ajouter un message flash qui persistera uniquement après la redirection
+    redirectAttributes.addFlashAttribute("message", "L'enchère a été ajoutée avec succès !");
+
+    return "redirect:/";
+}
 }

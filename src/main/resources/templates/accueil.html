@@ -11,6 +11,12 @@
 <!-- Menu -->
 <div th:replace="~{fragments/menu}"></div>
 
+<div id="message-box" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden"
+    th:data-message="${message}">
+    <span id="message-text"></span>
+</div>
+
+
 <!-- Section Accueil -->
 <section id="accueil" class="p-12 text-left">
     <div class="container mx-auto">
@@ -62,6 +68,10 @@
 </section>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("Vérification JS : message en brut = ", /*[[${message}]]*/ "PAS DE MESSAGE");
+    });
+
     document.addEventListener("DOMContentLoaded", function () {
         const searchInput = document.getElementById("search-input");
         const categoryInput = document.getElementById("category-id");
@@ -157,6 +167,32 @@
         });
 
     });
+
+    //Gestion du message d'information
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var messageBox = document.getElementById("message-box");
+    
+        if (messageBox) {
+            var message = messageBox.getAttribute("data-message"); // Récupération via HTML
+            
+            console.log("Message récupéré via `data-message` :", message);
+    
+            if (message && message.trim() !== "") {
+                var messageText = document.getElementById("message-text");
+                messageText.textContent = message;
+                messageBox.classList.remove("hidden");
+    
+                // Masquer après 5 secondes
+                setTimeout(function () {
+                    messageBox.classList.add("hidden");
+                }, 5000);
+            }
+        } else {
+            console.warn("Élément #message-box introuvable !");
+        }
+    });
+
 </script>
 
 </body>

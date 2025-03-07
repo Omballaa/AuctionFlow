@@ -2,6 +2,7 @@ package fr.eni.auctionflow.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,18 +13,22 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                .csrf(csrf -> csrf.disable()) // Désactiver CSRF temporairement
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/*", "/utilisateurs/inscription", "/utilisateurs/connexion").permitAll() // Pages accessibles sans connexion
+                        .requestMatchers("/*", "/utilisateurs/inscription", "/utilisateurs/connexion").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/ventes/ajouter").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
                         .loginPage("/utilisateurs/connexion")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/")
-                        .failureUrl("/utilisateurs/connexion?invalidCreditentials")
+                        .successHandler((request, response, authentication) -> {
+                                request.getSession().setAttribute("message", "Connexion réussie !");
+                                response.sendRedirect("/");})
+                        .failureUrl("/utilisateurs/connexion?invalidCredentials")
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -34,13 +39,17 @@ public class SecurityConfig {
                 .rememberMe(remember -> remember
                         .key("uniqueAndSecret")
                         .tokenValiditySeconds(86400) // 1 jour
+                )
+                .exceptionHandling(exception -> exception
+                        .accessDeniedPage("/erreur/acces-refuse") // Redirection si l'accès est refusé
                 );
-        return http.build();
-    }
+
+                return http.build();
+        }
 
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 }

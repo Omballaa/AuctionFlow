@@ -98,38 +98,6 @@ public class UtilisateurController {
         return "utilisateurs/connexion";  
     }
 
-    @PostMapping("/connexion")
-    public String connexionPost(Model model, HttpSession session) {
-        
-        // Vérifier si l'utilisateur est déjà authentifié
-        if (session.getAttribute("userID") != null) {
-            return "redirect:/"; // Redirige vers l'accueil si déjà connecté
-        }
-        
-        return "redirect:/utilisateurs/connexion?invalidCredentials"; // Redirige vers connexion avec erreur
-    }
-
-
-    // @PostMapping("/connexion")
-    public String connexionPost(
-    @ModelAttribute("dto") UtilisateurConnexionDTO dto,
-    BindingResult bindingResult, HttpSession session) 
-    {
-        
-        //verifier si utilisateur existe en bdd
-    	Utilisateur utilisateur = utilisateurService.rechercherParPseudoOuEmailEtMotDePasse(dto.getLogin(), dto.getLogin(), dto.getMotDePasse()); 
-    	
-    	//renvoyer vers page d'erreur si connexion echouée 
-    	if (utilisateur == null) {
-    		return "erreur";
-    	}
-    	
-    	//mettre utilisateur en session
-    	session.setAttribute("userID", utilisateur.getNoUtilisateur());
-    	session.setAttribute("pseudoUtilisateur", utilisateur.getPseudo());
-    	return "redirect:/";
-    }
-
     
     @GetMapping("/deconnexion")
     public String deconnexion(HttpSession session) {
@@ -161,8 +129,8 @@ public class UtilisateurController {
             utilisateur.setRue(utilisateurDTO.getAdresse());
             utilisateur.setVille(utilisateurDTO.getVille());
             utilisateur.setCodePostal(utilisateurDTO.getCodePostal());
-            utilisateur.setEmail(utilisateurDTO.getEmail());
-            utilisateur.setPseudo(utilisateurDTO.getPseudo());
+            utilisateur.setEmail(utilisateurDTO.getEmail().toLowerCase());
+            utilisateur.setPseudo(utilisateurDTO.getPseudo().toLowerCase());
             utilisateur.setMotDePasse(utilisateurDTO.getMotDePasse());
 
             utilisateurService.inscription(utilisateur);

@@ -9,24 +9,7 @@
 <body class="bg-gray-50 font-sans">
 
 <!-- Menu -->
-<nav class="bg-green-900 shadow-md py-4">
-    <div class="container mx-auto flex justify-between items-center px-6">
-        <div class="text-white text-2xl font-semibold">ENI-Enchère</div>
-
-        <!-- Barre de navigation pour les utilisateurs non connectés -->
-        <div class="flex items-center space-x-6" id="auth-links" th:if="${not isLoggedIn}">
-            <a href="/utilisateurs/connexion" class="bg-[#8B5A2B] text-white px-4 py-2 rounded-full border border-[#3f2204] hover:bg-[#3f2204] transition">Se connecter / S'inscrire</a>
-        </div>
-
-        <!-- Menu utilisateur pour les utilisateurs connectés -->
-        <div class="flex space-x-6 hidden" id="user-menu" th:if="${isLoggedIn}">
-            <a href="#" class="text-white">Enchères</a>
-            <a href="/ventes/ajouter" class="text-white">Vendre un article</a>
-            <a href="/utilisateurs/profil" class="text-white">Mon profil</a>
-            <a href="/utilisateurs/deconnexion" class="text-white">Déconnexion</a>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{fragments/menu}"></div>
 
 <!-- Section Accueil -->
 <section id="accueil" class="p-12 text-left">
@@ -39,21 +22,22 @@
             <input type="text" name="nomArticle" placeholder="Rechercher par nom..." class="px-4 py-2 w-1/2 rounded-full border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none" id="search-input">
 
             <!-- Sélecteur de catégorie -->
-            <div class="relative">
-                <button type="button" id="dropdown-btn" class="bg-gray-100 text-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-gray-200 transition">Catégories ▼</button>
+            <div class="relative inline-block text-left">
+                <button type="button" id="dropdown-btn" class="bg-gray-100 text-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-gray-200 transition">
+                    <span id="selected-category-text">Catégories ▼</span>
+                </button>
+                
                 <div class="absolute mt-2 w-48 bg-white shadow-md rounded-lg hidden" id="dropdown-menu">
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100" onclick="selectCategory(1)">Informatique</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100" onclick="selectCategory(2)">Ameublement</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100" onclick="selectCategory(3)">Vêtement</a>
-                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100" onclick="selectCategory(4)">Sport & Loisirs</a>
+                    <a th:each="categorie : ${categories}" 
+                    th:text="${categorie.libelle}" 
+                    th:attr="data-id=${categorie.noCategorie}" 
+                    class="block px-4 py-2 text-gray-700 hover:bg-gray-100 category-item">
+                    </a>
                 </div>
             </div>
 
-            <!-- Input caché pour l'ID de catégorie -->
+            <!-- Input caché pour stocker la catégorie sélectionnée -->
             <input type="hidden" id="category-id" name="categorieId" value="">
-
-            <!-- Bouton de filtrage -->
-            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-800 transition">Filtrer</button>
 
             <!-- Bouton pour réinitialiser les filtres -->
             <button type="button" id="reset-filters" class="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-800 transition">Réinitialiser</button>
@@ -78,46 +62,100 @@
 </section>
 
 <script>
-    const isLoggedIn =  /*[[${isLoggedIn}]]*/ false;
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("search-input");
+        const categoryInput = document.getElementById("category-id");
+        const searchForm = document.getElementById("search-form");
+        const ventesContainer = document.getElementById("ventes-container");
+        
+        const resetButton = document.getElementById("reset-filters");
 
-    // Logique pour afficher/masquer les menus
-    if (isLoggedIn) {
-        const userMenu = document.getElementById('user-menu');
-        const authLinks = document.getElementById('auth-links');
-        if (userMenu) userMenu.classList.remove('hidden');
-        if (authLinks) authLinks.classList.add('hidden');
-    }
+        const dropdownBtn = document.getElementById("dropdown-btn");
+        const dropdownMenu = document.getElementById("dropdown-menu");
+        const selectedCategoryText = document.getElementById("selected-category-text");
 
-    document.getElementById("dropdown-btn").addEventListener("click", function(event) {
-        event.stopPropagation(); // Empêche la soumission du formulaire
-        document.getElementById("dropdown-menu").classList.toggle("hidden");
-    });
+        function fetchResults() {
+            const nomArticle = searchInput.value;
+            const categorieId = categoryInput.value;
 
-    // Ajoute un gestionnaire d'événement pour fermer le menu déroulant si on clique en dehors
-    document.addEventListener("click", function(event) {
-        if (!document.getElementById("dropdown-btn").contains(event.target)) {
-            document.getElementById("dropdown-menu").classList.add("hidden");
+            // Ajout d'un indicateur de chargement
+            ventesContainer.innerHTML = "<p class='text-gray-600'>Chargement des résultats...</p>";
+
+            fetch(`/rechercher?nomArticle=${encodeURIComponent(nomArticle)}&categorieId=${encodeURIComponent(categorieId)}`)
+                .then(response => response.json())
+                .then(data => {
+                    ventesContainer.innerHTML = ""; // On vide les anciens résultats
+                    if (data.length === 0) {
+                        ventesContainer.innerHTML = "<p class='text-red-600'>Aucun résultat trouvé.</p>";
+                        return;
+                    }
+
+                    // Génération dynamique des cartes
+                    data.forEach(article => {
+                        const articleHtml = `
+                            <div class="bg-white shadow-lg rounded-lg p-4">
+                                <img src="https://placehold.jp/3d4070/ffffff/150x150.png" class="w-full h-40 object-cover rounded-md">
+                                <h3 class="text-xl font-semibold mt-2">${article.nomArticle}</h3>
+                                <p class="text-gray-700">Prix de départ : ${article.prixInitial} pts</p>
+                                <p class="text-gray-500 text-sm">Fin : ${article.dateFinEncheres}</p>
+                                <button class="bg-green-600 text-white px-4 py-2 mt-3 rounded-md hover:bg-green-800 transition">Voir l'enchère</button>
+                            </div>
+                        `;
+                        ventesContainer.innerHTML += articleHtml;
+                    });
+                })
+                .catch(error => {
+                    ventesContainer.innerHTML = "<p class='text-red-600'>Erreur lors du chargement des données.</p>";
+                    console.error("Erreur AJAX :", error);
+                });
         }
-    });
 
-    function selectCategory(id) {
-        document.getElementById("category-id").value = id;
-        document.getElementById("dropdown-menu").classList.add("hidden");
-    }
+        // Réinitialiser les filtres
+        resetButton.addEventListener("click", function () {
+            searchInput.value = "";
+            categoryInput.value = "";
+            document.getElementById("dropdown-btn").textContent = "Catégories ▼"; // Réinitialisation du bouton visuel
+            fetchResults(); // Recharge les enchères en cours
+        });
 
-    // Réinitialiser les filtres
-    document.getElementById("reset-filters").addEventListener("click", function() {
-        // Réinitialiser le champ de recherche
-        document.getElementById("search-input").value = "";
+        // Déclencher la recherche dynamique à chaque modification du champ
+        searchInput.addEventListener("input", fetchResults);
+        categoryInput.addEventListener("change", fetchResults);
+        searchForm.addEventListener("submit", function (event) {
+            event.preventDefault(); // Empêcher le rechargement de la page
+            fetchResults();
+        });
 
-        // Réinitialiser la catégorie sélectionnée
-        document.getElementById("category-id").value = "";
+        // Gestion du menu déroulant des catégories
+        dropdownBtn.addEventListener("click", function (event) {
+            event.stopPropagation();
+            dropdownMenu.classList.toggle("hidden");
+        });
 
-        // Fermer le menu déroulant
-        document.getElementById("dropdown-menu").classList.add("hidden");
+        // Sélectionner une catégorie
+        document.querySelectorAll(".category-item").forEach(item => {
+            item.addEventListener("click", function (event) {
+                event.preventDefault();
+                const categoryName = this.textContent;
+                const categoryId = this.getAttribute("data-id");
 
-        // Rediriger vers la page d'accueil (menu d'accueil de base)
-        window.location.href = "/";  // Remplacez par l'URL de votre page d'accueil
+                // Mise à jour du bouton et de l'input caché
+                selectedCategoryText.textContent = categoryName;
+                categoryInput.value = categoryId;
+
+                // Fermer le menu et lancer la recherche
+                dropdownMenu.classList.add("hidden");
+                fetchResults();
+            });
+        });
+
+        // Fermer le menu si on clique en dehors
+        document.addEventListener("click", function (event) {
+            if (!dropdownBtn.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.classList.add("hidden");
+            }
+        });
+
     });
 </script>
 

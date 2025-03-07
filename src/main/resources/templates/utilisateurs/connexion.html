@@ -9,15 +9,7 @@
 <body class="bg-gray-50 font-sans">
 
 <!-- Menu -->
-<nav class="bg-green-900 shadow-md py-4">
-    <div class="container mx-auto flex justify-between items-center px-6">
-        <div class="text-white text-2xl font-semibold">ENI-Enchère</div>
-        <div class="flex items-center space-x-6">
-            <a href="/" class="text-white">Accueil</a>
-            <a href="/utilisateurs/inscription" class="text-white">S'inscrire</a>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{fragments/menu}"></div>
 
 <!-- Formulaire de connexion -->
 <section class="p-12">

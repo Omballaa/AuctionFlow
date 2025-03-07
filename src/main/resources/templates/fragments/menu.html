@@ -1,0 +1,52 @@
+<nav class="bg-green-900 shadow-md py-4 w-full top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center px-6">
+        <div class="text-white text-2xl font-semibold">ENI-Enchère</div>
+
+        <!-- Menu pour les utilisateurs non connectés -->
+        <div class="flex items-center space-x-6" th:if="${isLoggedIn == null or not isLoggedIn}">
+            <a href="/utilisateurs/connexion" class="bg-[#8B5A2B] text-white px-4 py-2 rounded-full border border-[#3f2204] hover:bg-[#3f2204] transition">
+                Se connecter / S'inscrire
+            </a>
+        </div>
+        
+        <!-- Menu pour les utilisateurs connectés -->
+        <div class="flex space-x-6" th:if="${isLoggedIn != null and isLoggedIn}">
+            <a href="/" class="text-white hover:underline">Accueil</a>
+            <a href="/ventes/ajouter" class="text-white hover:underline">Vendre un article</a>
+
+            <!-- Menu déroulant pour le profil -->
+            <div class="relative">
+                <button id="profilBtn" class="text-white focus:outline-none">Profil ▼</button>
+            
+                <!-- Menu déroulant (caché par défaut) -->
+                <div id="profilMenu" class="absolute hidden bg-white shadow-md mt-2 rounded-md w-48">
+                    <a href="/utilisateurs/profil" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Mon profil</a>
+                    <a href="/lister-mes-ventes" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Mes ventes</a>
+                    <a href="/mes-encheres" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Mes enchères</a>
+                    <a href="/mes-gains" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Mes acquisitions</a>
+                    <a href="/utilisateurs/deconnexion" class="block px-4 py-2 text-red-600 hover:bg-gray-200">Se déconnecter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const profilBtn = document.getElementById("profilBtn");
+        const profilMenu = document.getElementById("profilMenu");
+
+        // Toggle du menu au clic sur le bouton "Profil"
+        profilBtn.addEventListener("click", function (event) {
+            event.stopPropagation(); // Empêche le clic de se propager
+            profilMenu.classList.toggle("hidden"); // Affiche ou cache le menu
+        });
+
+        // Fermer le menu si on clique en dehors
+        document.addEventListener("click", function (event) {
+            if (!profilMenu.contains(event.target) && !profilBtn.contains(event.target)) {
+                profilMenu.classList.add("hidden"); // Cache le menu
+            }
+        });
+    });
+</script>

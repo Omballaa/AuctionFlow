@@ -24,7 +24,7 @@ public interface ArticleDao extends JpaRepository<Article, Long> {
 
     // Nouvelle méthode pour filtrer par nom et catégorie
     List<Article> findByNomArticleContainingIgnoreCaseAndCategorie_noCategorie(String nomArticle, Long noCategorie);
-
+    List<Article> findByNomArticleContainingIgnoreCase(String nomArticle);
 	List<Article> findByVenteCloturee(boolean b);
 
 }

@@ -31,21 +31,17 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<Article> getEnchereEnCours(String nomArticle, Long categorieId) {
-        if (nomArticle != null && categorieId != null) {
-            return articleDao.findByNomArticleContainingIgnoreCaseAndCategorie_noCategorie(nomArticle, categorieId);
-        }
-        // Si uniquement le nom est spécifié
-        else if (nomArticle != null) {
-            return articleDao.findByNomArticle(nomArticle);
-        }
-        // Si uniquement la catégorie est spécifiée
-        else if (categorieId != null) {
-            return articleDao.findByCategorie_noCategorie(categorieId);
-        }
-        // Si aucun filtre n'est spécifié, on récupère toutes les enchères en cours
-        return articleDao.findEncheresEnCours();
+public List<Article> getEnchereEnCours(String nomArticle, Long categorieId) {
+    if (nomArticle == null) {
+        nomArticle = ""; // Assure qu'on ne filtre pas sur NULL
     }
+
+    if (categorieId != null) {
+        return articleDao.findByNomArticleContainingIgnoreCaseAndCategorie_noCategorie(nomArticle, categorieId);
+    } else {
+        return articleDao.findByNomArticleContainingIgnoreCase(nomArticle);
+    }
+}
 
 	@Override
 	public List<Article> getMesVentes(long utilId) {

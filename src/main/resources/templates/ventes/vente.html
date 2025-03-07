@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail de l'enchère</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Menu de navigation -->
+    <div th:replace="~{fragments/menu}"></div>
+
+    <div class="container mx-auto p-6">
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h1 class="text-3xl font-bold text-gray-800" th:text="${article.nomArticle}"></h1>
+            <p class="text-gray-600 mt-2" th:text="${article.description}"></p>
+            
+            <div class="mt-4">
+                <p class="text-lg font-semibold">Catégorie : <span th:text="${article.categorie.libelle}"></span></p>
+                <p class="text-lg font-semibold">Prix de départ : <span th:text="${article.prixInitial} + ' pts'"></span></p>
+                <p class="text-lg font-semibold">Meilleure enchère : 
+                    <span th:if="${meilleureEnchere}" th:text="${meilleureEnchere.montantEnchere} + ' pts'"></span>
+                    <span th:unless="${meilleureEnchere}">Aucune enchère</span>
+                </p>
+                <p class="text-lg font-semibold">Vendeur : <span th:text="${article.utilisateur.pseudo}"></span></p>
+            </div>
+            
+            <!-- Formulaire pour enchérir -->
+            <form th:action="@{/encherir}" method="post" class="mt-6">
+                <input type="hidden" name="noArticle" th:value="${article.noArticle}">
+                <label for="montantEnchere" class="block text-lg font-semibold mb-2">Votre enchère :</label>
+                <input type="number" name="montantEnchere" id="montantEnchere" 
+                       class="w-full border border-gray-300 px-4 py-2 rounded-lg" required>
+                <button type="submit" 
+                        class="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+                    Enchérir
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -60,7 +60,7 @@
                        class="text-gray-700"></p>
                     <p th:text="|Fin : ${#dates.format(article.dateFinEncheres, 'dd/MM/yyyy')}|"
                        class="text-gray-500 text-sm"></p>
-                    <button class="bg-green-600 text-white px-4 py-2 mt-3 rounded-md hover:bg-green-800 transition">Voir l'enchère</button>
+                    <a th:href="@{/enchere/detail(noArticle=${article.noArticle})}" class="bg-green-600 text-white px-4 py-2 mt-3 rounded-md hover:bg-green-800 transition block text-center">Voir l'enchère</a>
                 </div>
             </div>
         </div>

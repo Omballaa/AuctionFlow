@@ -12,44 +12,40 @@
 <div th:replace="~{fragments/menu}"></div>
 
 <!-- Formulaire d'ajout d'enchère -->
-<section class="p-12">
-    <div class="container mx-auto">
-        <h1 class="text-3xl font-bold mb-6">Ajouter une enchère</h1>
-        <form action="/ventes/ajouter" method="POST">
-            <div class="mb-4">
-                <label for="articleName" class="block text-gray-700">Nom de l'article</label>
-                <input type="text" id="articleName" name="articleName" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required>
+<section class="flex justify-center items-center min-h-screen p-6">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-96 border border-gray-300">
+        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Ajouter une enchère</h1>
+        <form action="/ventes/ajouter" method="POST" class="space-y-4">
+            <div>
+                <label for="articleName" class="block text-gray-700 font-medium">Nom de l'article</label>
+                <input type="text" id="articleName" name="articleName" class="px-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required>
             </div>
-            <div class="mb-4">
-                <label for="articleDescription" class="block text-gray-700">Description</label>
-                <textarea id="articleDescription" name="articleDescription" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required></textarea>
+            <div>
+                <label for="articleDescription" class="block text-gray-700 font-medium">Description</label>
+                <textarea id="articleDescription" name="articleDescription" class="px-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required></textarea>
             </div>
-            <div class="mb-4">
-                <label for="categorie" class="block text-gray-700">Catégorie</label>
-                <select id="categorie" name="no_Categorie" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required>
+            <div>
+                <label for="categorie" class="block text-gray-700 font-medium">Catégorie</label>
+                <select id="categorie" name="no_Categorie" class="px-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required>
                     <option value="" disabled selected>Choisissez une catégorie</option>
                     <th:block th:each="categorie : ${categories}">
                         <option th:value="${categorie.noCategorie}" th:text="${categorie.libelle}"></option>
                     </th:block>
                 </select>
             </div>
-            <div class="mb-4">
-                <label for="startingPrice" class="block text-gray-700">Mise à prix</label>
-                <input type="number" id="startingPrice" name="startingPrice" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required>
+            <div>
+                <label for="startingPrice" class="block text-gray-700 font-medium">Mise à prix</label>
+                <input type="number" id="startingPrice" name="startingPrice" class="px-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required>
             </div>
-            <div class="mb-4">
-                <label for="startDate" class="block text-gray-700">Date de début</label>
-                <input type="datetime-local" id="startDate" name="startDate" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required>
+            <div>
+                <label for="startDate" class="block text-gray-700 font-medium">Date de début</label>
+                <input type="datetime-local" id="startDate" name="startDate" class="px-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required>
             </div>
-            <div class="mb-4">
-                <label for="endDate" class="block text-gray-700">Date de fin</label>
-                <input type="datetime-local" id="endDate" name="endDate" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required>
+            <div>
+                <label for="endDate" class="block text-gray-700 font-medium">Date de fin</label>
+                <input type="datetime-local" id="endDate" name="endDate" class="px-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required>
             </div>
-            <div class="mb-4">
-                <label for="utilisateurId" class="block text-gray-700">Utilisateur</label>
-                <input type="number" id="utilisateurId" name="utilisateurId" class="px-4 py-2 w-full border border-gray-300 rounded-lg" required>
-            </div>
-            <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg">Ajouter l'enchère</button>
+            <button type="submit" class="bg-green-600 text-white px-6 py-2 w-full rounded-lg hover:bg-green-800 transition">Ajouter l'enchère</button>
         </form>
     </div>
 </section>

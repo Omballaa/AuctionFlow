@@ -1,7 +1,5 @@
 package fr.eni.auctionflow.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +20,6 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/utilisateurs")
 public class UtilisateurController {
-	private static final Logger logger = LoggerFactory.getLogger(UtilisateurController.class);
 	
     @Autowired
     private UtilisateurService utilisateurService;
@@ -44,6 +41,8 @@ public class UtilisateurController {
         return "redirect:/"; //page accueil
     }
 
+
+
     //en tant qu'admin, je peux supp des comptes util
     @GetMapping("/admin/supprimer-utilisateur/{id}")
     public String supprimerUtilisateurAdminGet(@PathVariable Long id, HttpSession session) {
@@ -53,13 +52,13 @@ public class UtilisateurController {
         try {
 			utilisateurService.supprimerUtilisateur(id);
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}//supp util ciblé
         return "redirect:/admin/liste-utilisateurs"; //redirect vers liste des util
     }
 
     
+
     //afficher le profil
     @GetMapping("/afficher-profil")
     public String afficherProfilGet(HttpSession session, Model model) {
@@ -71,6 +70,8 @@ public class UtilisateurController {
     	return "profil";
     }
     
+
+
     //modifier le profil 
     //formulaire de modification profil
     @GetMapping("/modifier-profil")
@@ -83,6 +84,8 @@ public class UtilisateurController {
         return "modifier-profil"; 
     }
     
+
+
     //traitement de la modification profil
     @PostMapping("/modifier-profil")
     public String modifierProfilPost(@ModelAttribute("util") Utilisateur utilisateur) {
@@ -99,6 +102,7 @@ public class UtilisateurController {
     }
 
     
+
     @GetMapping("/deconnexion")
     public String deconnexion(HttpSession session) {
     	session.invalidate();
@@ -113,6 +117,7 @@ public class UtilisateurController {
         model.addAttribute("utilisateur", new Utilisateur());
         return "utilisateurs/inscription"; 
     }
+
 
         
     @PostMapping("/inscription")

@@ -11,6 +11,7 @@ import fr.eni.auctionflow.service.EnchereService;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,12 +19,23 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import org.springframework.security.core.Authentication;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class EnchereController {
+
+    // Méthode pour vérifier si l'utilisateur est authentifié
+    private boolean isUserAuthenticated() 
+    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("DEBUG: Authentication = " + SecurityContextHolder.getContext().getAuthentication());
+        return authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String);
+    }
+
 
     private final EnchereService enchereService;
     private final ArticleService articleService;
@@ -35,9 +47,12 @@ public class EnchereController {
         this.categorieDao = categorieDao;
     }
     
+
+
     @GetMapping("/enchrir/{noArticle}")
     public String encherirGET(@RequestParam long noArticle, Model model) {
     	
+
     	Article article = articleService.getArticleParNoArticle(noArticle);
     	EncherirDTO dto = new EncherirDTO();
     	dto.setNoArticle(noArticle);// THEO : un champ hidden
@@ -87,11 +102,21 @@ public class EnchereController {
     // Méthode GET pour afficher la page d'ajout d'enchère avec les catégories disponibles
     @GetMapping("/ventes/ajouter")
     public String afficherFormulaireAjoutEnchere(Model model) {
+        
+        //------------------------------------------------------------------
+        //----------------   Gestion du isLoggedIn   -----------------------
+        //------------------------------------------------------------------
+        boolean isLoggedIn = isUserAuthenticated();
+        model.addAttribute("isLoggedIn", isLoggedIn);
+        //------------------------------------------------------------------
+        //------------------------------------------------------------------
+        
         // Récupérer toutes les catégories
         List<Categorie> categories = categorieDao.findAll();
         model.addAttribute("categories", categories);
         return "./ventes/ajouter"; // Cette vue affichera le formulaire d'ajout d'enchère
     }
+
 
     // Méthode POST pour ajouter l'enchère
     @PostMapping("/ventes/ajouter")

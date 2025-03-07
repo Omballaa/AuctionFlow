@@ -31,6 +31,8 @@
     </div>
 </nav>
 
+<p th:text="${isLoggedIn != null and isLoggedIn} ? 'Utilisateur connecté' : 'Utilisateur déconnecté'" class="text-red-500"></p>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const profilBtn = document.getElementById("profilBtn");

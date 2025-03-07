@@ -19,11 +19,22 @@ import java.util.List;
 @Controller
 public class HomeController {
 
+    // Méthode pour vérifier si l'utilisateur est authentifié
+    private boolean isUserAuthenticated() 
+    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("DEBUG: Authentication = " + SecurityContextHolder.getContext().getAuthentication());
+        return authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String);
+    }
+
+
     @Autowired
     private ArticleService articleService;
 
     @Autowired
     private CategorieService categorieService;
+
+
 
     @GetMapping("/")
     public String afficherAccueil(
@@ -34,13 +45,13 @@ public class HomeController {
         {
             // Vérifier si l'utilisateur est authentifié
             boolean isLoggedIn = isUserAuthenticated();
+            model.addAttribute("isLoggedIn", isLoggedIn);
 
             // Ajouter les articles en cours dans le modèle
             List<Article> encheresEnCours = articleService.getEnchereEnCours(nomArticle, categorieId);
             model.addAttribute("encheres", encheresEnCours);
 
-            // Ajouter la variable isLoggedIn pour conditionner l'affichage sur la page
-            model.addAttribute("isLoggedIn", isLoggedIn);
+            
             
             //Ajout des catégories pour l'affichage du filtre
             List<Categorie> categories = categorieService.getAllCategories();
@@ -49,15 +60,9 @@ public class HomeController {
             return "accueil"; // Retourne la vue d'accueil
         }
 
+    
 
-    // Méthode pour vérifier si l'utilisateur est authentifié
-    private boolean isUserAuthenticated() 
-        {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            System.out.println("DEBUG: Authentication = " + SecurityContextHolder.getContext().getAuthentication());
-            return authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String);
-        }
-
+        
     @GetMapping("/rechercher")
     @ResponseBody
     public List<Article> rechercherArticles(
